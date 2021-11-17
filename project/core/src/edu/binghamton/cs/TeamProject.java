@@ -20,9 +20,13 @@ public class TeamProject extends ApplicationAdapter {
 	final String SLEEP = "sleep_minigame";
 	final String HUNGER = "food_minigame";
 	final String STUDY = "study_minigame";
-	final String FITNESS = "sort_minigame";
+	final String FITNESS = "sport_minigame";
 	public String gameState = DORM;
-	Dorm dorm;
+	Dorm dorm = new Dorm();
+	Study study = new Study();
+	Sleep sleep = new Sleep();
+	Hunger hunger = new Hunger();
+	Fitness fitness = new Fitness();
 
 	//Renderables
 	SpriteBatch dorm_batch;
@@ -37,9 +41,11 @@ public class TeamProject extends ApplicationAdapter {
 
 	@Override
 	public void create () {
-		dorm = new Dorm();
 		dorm.create();
-
+		fitness.create();
+		hunger.create();
+		sleep.create();
+		study.create();
 	}
 
 	@Override
@@ -49,16 +55,20 @@ public class TeamProject extends ApplicationAdapter {
 			gameState = dorm.gameState;
 		}
 		else if(gameState==SLEEP){
-			ScreenUtils.clear(0,0, 1, 1);
+			sleep.render();
+			gameState = sleep.gameState;
 		}
 		else if(gameState==HUNGER){
-			ScreenUtils.clear(0, 1, 0, 1);
+			hunger.render();
+			gameState = hunger.gameState;
 		}
 		else if(gameState==STUDY){
-			ScreenUtils.clear(1, 1, 0, 1);
+			study.render();
+			gameState = study.gameState;
 		}
 		else if(gameState==FITNESS){
-			ScreenUtils.clear(1, 0, 1, 1);
+			fitness.render();
+			gameState = fitness.gameState;
 		}
 
 	}

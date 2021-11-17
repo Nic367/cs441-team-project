@@ -14,7 +14,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 public class Dorm {
-    String[] states= {"dorm_loop", "sleep_minigame", "food_minigame", "study_minigame", "sort_minigame"};
+    String[] states= {"dorm_loop", "sleep_minigame", "food_minigame", "study_minigame", "sport_minigame"};
     String gameState = states[0];
 
     //Renderables
@@ -53,7 +53,7 @@ public class Dorm {
 
     public void create(){
         batch = new SpriteBatch();
-        img = new Texture("badlogic.jpg");
+
 
         //Sleep Button
         sleepImg = new Texture(Gdx.files.internal("data/sleepButton.png"));
