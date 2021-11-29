@@ -18,6 +18,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import java.util.ArrayList;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Hunger {
     String[] states= {"dorm_loop", "sleep_minigame", "food_minigame", "study_minigame", "sport_minigame"};
@@ -41,9 +42,11 @@ public class Hunger {
     int player_w = 100;
 
     // Food
-    ArrayList<ShapeRenderer> foodList;
+    ArrayList<Food> foodList;
+    ArrayList<Food> caughtFoodList;
+    ArrayList<Food> fallenFoodList;
     Food food;
-
+    float foodTimer=0;
 
     // Game Background
     Texture bg;
@@ -55,10 +58,12 @@ public class Hunger {
         hitbox = new Rectangle();
 
         //Food
-        food = new Food();
+        foodList = new ArrayList<>();
+        caughtFoodList = new ArrayList<>();
+        fallenFoodList = new ArrayList<>();
+        food = new Food(foodList);
 //        foodRect = new Rectangle();
 //        food = new ShapeRenderer();
-//        foodList = new ArrayList<ShapeRenderer>();
 //        foodList.add(food);
 //        food_x = 500;
 //        food_y = 1000;
@@ -116,24 +121,53 @@ public class Hunger {
 
 
         /* ====== FALLING FOOD ====== */
-        /* hitbox */
-        if(food!=null){
-            food.visiblebox.begin(ShapeRenderer.ShapeType.Filled);
-            food.visiblebox.setColor(71/255f,31/255f,0/255f,1);
-            food.visiblebox.rect(food.x, food.y, 100, 100);
-            food.rect.set(food.x, food.y, 100, 100);
-            food.visiblebox.end();
-            /* movement */
-            food.y -= 2;
+        /* spawning */
+        int rand = ThreadLocalRandom.current().nextInt(2,6)%Gdx.graphics.getWidth();
 
-            if(hitbox.overlaps(food.rect)){
-                food.visiblebox = null;
-                food.rect = null;
-                food = null;
+        if(foodTimer >= rand){
+            food = new Food(foodList);
+            foodTimer=0;
+        }
+        else{
+            foodTimer+=Gdx.graphics.getDeltaTime();
+        }
+
+        /* hitbox */
+        for(Food food : foodList){
+            if(food!=null){
+                food.visiblebox.begin(ShapeRenderer.ShapeType.Filled);
+                food.visiblebox.setColor(71/255f,31/255f,0/255f,1);
+                food.visiblebox.rect(food.x, food.y, 100, 100);
+                food.rect.set(food.x, food.y, 100, 100);
+                food.visiblebox.end();
+                /* movement */
+                food.y -= 2;
+            }
+
+            if(hitbox.overlaps(food.rect)){ //If the player catches the food
+                caughtFoodList.add(food);
+            }
+
+            if(food.y<= 20){  //Check if food hit the ground
+                fallenFoodList.add(food);
             }
         }
 
+        for(Food food:fallenFoodList){ //Un-rendering food that hit the ground
+            food.visiblebox = null;
+            food.rect = null;
+            foodList.remove(food);
+            //Remove health
+        }
+        for(Food food:caughtFoodList){ //Un-rendering food that the player caught
+            food.visiblebox = null;
+            food.rect = null;
+            foodList.remove(food);
+            //Stack Sandwich
+        }
 
+        caughtFoodList.clear(); //Clearing the temp lists
+        fallenFoodList.clear();
 
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
@@ -142,10 +176,12 @@ public class Hunger {
     static class Food{
         ShapeRenderer visiblebox = new ShapeRenderer();
         Rectangle rect = new Rectangle();
-        int x = 500;
+        int x;
         int y = 1000;
 
-        Food(){
+        Food(ArrayList<Food> foodList){
+            foodList.add(this);
+            x=ThreadLocalRandom.current().nextInt(0,99999)%Gdx.graphics.getWidth();
         }
     }
 }
