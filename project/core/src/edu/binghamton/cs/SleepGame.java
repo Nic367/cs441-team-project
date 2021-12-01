@@ -22,6 +22,8 @@ public class SleepGame implements Screen {
     Sleep game;
 
     Texture tileImage;
+    Texture sleeperImage;
+    Rectangle sleeper;
 
     int screenWidth = 0;
     int screenHeight = 0;
@@ -50,6 +52,13 @@ public class SleepGame implements Screen {
 
         game.batch = new SpriteBatch();
         tileImage = new Texture("badlogic.jpg");
+        sleeperImage = new Texture("badlogic.jpg");
+
+        sleeper = new Rectangle();
+        sleeper.x = 0.5f*screenWidth-150;
+        sleeper.y = 0.5f*screenHeight-250;
+        sleeper.width = 300;
+        sleeper.height = 500;
 
         random = new Random();
 
@@ -62,12 +71,30 @@ public class SleepGame implements Screen {
     }
 
     public void createTiles(){
-        Float[] arr = {0f, 0.25f, 0.5f, 0.75f};
         Random random = new Random();
-        r = random.nextInt(arr.length);
+        r = random.nextInt(4);
+        System.out.println(r);
         Rectangle tile = new Rectangle();
-        tile.x = arr[r]*screenWidth + 50;
-        tile.y = screenHeight;
+        switch (r){
+            case 0:
+                tile.x = screenWidth*0f;
+                tile.y = screenHeight*0.5f;
+                break;
+            case 1:
+                tile.x = screenWidth*0.5f;
+                tile.y = screenHeight*1f;
+                break;
+            case 2:
+                tile.x = screenWidth*0.5f;
+                tile.y = screenHeight*0f;
+                break;
+            case 3:
+                tile.x = screenWidth*1f;
+                tile.y = screenHeight*0.5f;
+                break;
+            default:
+                break;
+        }
         tile.width = 100;
         tile.height = 100;
         tiles.add(tile);
@@ -83,8 +110,9 @@ public class SleepGame implements Screen {
     public void render(float delta) {
         ScreenUtils.clear(0,0,1,1);
         game.batch.begin();
+        game.batch.draw(sleeperImage, 0.5f*screenWidth-150,0.5f*screenHeight-250,300,500);
         for(Rectangle i: tiles){
-            game.batch.draw(tileImage, i.x, i.y, 300, 500);
+            game.batch.draw(tileImage, i.x, i.y, 200, 200);
         }
         game.batch.end();
 
@@ -92,10 +120,24 @@ public class SleepGame implements Screen {
 
         for(Iterator<Rectangle> iterator = tiles.iterator(); iterator.hasNext();){
             Rectangle tile = iterator.next();
-            tile.y -= 3000 * Gdx.graphics.getDeltaTime();
-            if(tile.y < screenHeight*0.2f){
-                iterator.remove();
+            //Left to center
+            if(tile.x < screenWidth*0.5f) {
+                tile.x += 3000 * Gdx.graphics.getDeltaTime();
             }
+            //Right to center
+            else if(tile.x > screenWidth*0.5f) {
+                tile.x -= 3000 * Gdx.graphics.getDeltaTime();
+            }
+            //Top to center
+            else if(tile.y > screenHeight*0.5f){
+                tile.y -= 3000 * Gdx.graphics.getDeltaTime();
+            }
+            //Bottom to center
+            else {
+                tile.y += 3000 * Gdx.graphics.getDeltaTime();
+            }
+            if(tile.overlaps(sleeper))
+                iterator.remove();
 
         }
     }
