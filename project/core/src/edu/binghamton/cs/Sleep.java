@@ -24,8 +24,6 @@ public class Sleep extends Game {
     SpriteBatch batch;
     BitmapFont font;
 
-
-
     //Game Background
     Texture bg;
     TextureRegion region;
