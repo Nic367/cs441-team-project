@@ -1,6 +1,7 @@
 package edu.binghamton.cs;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -8,6 +9,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.TimeUtils;
@@ -95,8 +97,8 @@ public class SleepGame implements Screen {
             default:
                 break;
         }
-        tile.width = 100;
-        tile.height = 100;
+        tile.width = 200;
+        tile.height = 200;
         tiles.add(tile);
         tileTime = TimeUtils.nanoTime();
     }
@@ -122,19 +124,34 @@ public class SleepGame implements Screen {
             Rectangle tile = iterator.next();
             //Left to center
             if(tile.x < screenWidth*0.5f) {
-                tile.x += 3000 * Gdx.graphics.getDeltaTime();
+                tile.x += 1000 * Gdx.graphics.getDeltaTime();
+                if(Gdx.input.isKeyJustPressed(Input.Keys.LEFT))
+                    iterator.remove();
             }
             //Right to center
             else if(tile.x > screenWidth*0.5f) {
-                tile.x -= 3000 * Gdx.graphics.getDeltaTime();
+                tile.x -= 1000 * Gdx.graphics.getDeltaTime();
+                if(Gdx.input.isKeyJustPressed(Input.Keys.RIGHT))
+                    iterator.remove();
             }
             //Top to center
             else if(tile.y > screenHeight*0.5f){
-                tile.y -= 3000 * Gdx.graphics.getDeltaTime();
+                tile.y -= 1000 * Gdx.graphics.getDeltaTime();
+                if(Gdx.input.isKeyJustPressed(Input.Keys.UP))
+                    iterator.remove();
             }
             //Bottom to center
             else {
-                tile.y += 3000 * Gdx.graphics.getDeltaTime();
+                tile.y += 1000 * Gdx.graphics.getDeltaTime();
+                if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN))
+                    iterator.remove();
+            }
+            if(Gdx.input.isTouched()){
+                Vector3 touchpos = new Vector3();
+                touchpos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
+                camera.unproject(touchpos);
+                if(tile.contains(touchpos.x, touchpos.y))
+                    iterator.remove();
             }
             if(tile.overlaps(sleeper))
                 iterator.remove();
