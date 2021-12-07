@@ -31,7 +31,7 @@ public class Sleep extends Game {
     public void create(){
         batch = new SpriteBatch();
         font = new BitmapFont();
-        font.getData().setScale(15f);
+        font.getData().setScale(5f);
         stage = new Stage(new ScreenViewport());
         setScreen(new SleepGame(this));
 

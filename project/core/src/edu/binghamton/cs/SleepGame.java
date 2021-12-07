@@ -44,10 +44,19 @@ public class SleepGame implements Screen {
 
     long advancedTime;
 
+    Integer timer;
+    float timecount;
+    float tilecount;
+    Dorm dorm = new Dorm();
+
+    Music track;
+
     public SleepGame(Sleep game){
         this.game = game;
         screenWidth = Gdx.graphics.getWidth();
         screenHeight = Gdx.graphics.getHeight();
+
+        track = Gdx.audio.newMusic(Gdx.files.internal("data/imonlysleeping.mp3"));
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false);
@@ -70,12 +79,16 @@ public class SleepGame implements Screen {
         createTiles();
 
         advancedTime = 0;
+
+        //TIMER
+        timer = 3;
+        timecount = 0;
+        tilecount = 0;
     }
 
     public void createTiles(){
         Random random = new Random();
         r = random.nextInt(4);
-        System.out.println(r);
         Rectangle tile = new Rectangle();
         switch (r){
             case 0:
@@ -105,44 +118,64 @@ public class SleepGame implements Screen {
 
     @Override
     public void show() {
+        track.play();
+    }
+
+    public void update(float dt){
+        tilecount += 1.75*dt;
+        if(tilecount >= 1){
+            createTiles();
+            tilecount = 0;
+        }
+        timecount += dt;
+        if(timecount >= 1){
+            timer--;
+            timecount = 0;
+        }
 
     }
 
     @Override
     public void render(float delta) {
+        update(delta);
         ScreenUtils.clear(0,0,1,1);
+
+
         game.batch.begin();
         game.batch.draw(sleeperImage, 0.5f*screenWidth-150,0.5f*screenHeight-250,300,500);
         for(Rectangle i: tiles){
             game.batch.draw(tileImage, i.x, i.y, 200, 200);
         }
+        game.font.draw(game.batch, "Time: " + timer, screenWidth-350, screenHeight-100);
         game.batch.end();
 
-        if(TimeUtils.nanoTime() - tileTime > 550000000) createTiles();
+
+
+        //if(TimeUtils.nanoTime() - tileTime > 550000000) createTiles();
 
         for(Iterator<Rectangle> iterator = tiles.iterator(); iterator.hasNext();){
             Rectangle tile = iterator.next();
             //Left to center
             if(tile.x < screenWidth*0.5f) {
-                tile.x += 1000 * Gdx.graphics.getDeltaTime();
+                tile.x += 1500 * Gdx.graphics.getDeltaTime();
                 if(Gdx.input.isKeyJustPressed(Input.Keys.LEFT))
                     iterator.remove();
             }
             //Right to center
             else if(tile.x > screenWidth*0.5f) {
-                tile.x -= 1000 * Gdx.graphics.getDeltaTime();
+                tile.x -= 1500 * Gdx.graphics.getDeltaTime();
                 if(Gdx.input.isKeyJustPressed(Input.Keys.RIGHT))
                     iterator.remove();
             }
             //Top to center
             else if(tile.y > screenHeight*0.5f){
-                tile.y -= 1000 * Gdx.graphics.getDeltaTime();
+                tile.y -= 2000 * Gdx.graphics.getDeltaTime();
                 if(Gdx.input.isKeyJustPressed(Input.Keys.UP))
                     iterator.remove();
             }
             //Bottom to center
             else {
-                tile.y += 1000 * Gdx.graphics.getDeltaTime();
+                tile.y += 2000 * Gdx.graphics.getDeltaTime();
                 if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN))
                     iterator.remove();
             }
@@ -156,6 +189,14 @@ public class SleepGame implements Screen {
             if(tile.overlaps(sleeper))
                 iterator.remove();
 
+        }
+
+        // END OF GAME
+        if(timer < 1){
+            System.out.println("TIME");
+            //game.gameState = game.states[0];
+            //dorm.render();
+            //dispose();
         }
     }
 
@@ -181,6 +222,9 @@ public class SleepGame implements Screen {
 
     @Override
     public void dispose() {
+
         tileImage.dispose();
+        sleeperImage.dispose();
+        track.dispose();
     }
 }
