@@ -1,7 +1,10 @@
 package edu.binghamton.cs;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -11,7 +14,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class Dorm {
     String[] states= {"dorm_loop", "sleep_minigame", "food_minigame", "study_minigame", "sport_minigame"};
@@ -21,6 +26,8 @@ public class Dorm {
     Stage stage;
     SpriteBatch batch;
     Texture img;
+    private Viewport viewport;
+    private Camera camera;
 
 
     //Game Background
@@ -56,12 +63,12 @@ public class Dorm {
 
 
         //Sleep Button
-        sleepImg = new Texture(Gdx.files.internal("data/sleepButton.png"));
+        sleepImg = new Texture(Gdx.files.internal("data/dorm/sleepButton.png"));
         sleepRegion = new TextureRegion(sleepImg);
         sleepDrawable = new TextureRegionDrawable(sleepRegion);
         sleepButton = new ImageButton(sleepDrawable);
         sleepButton.setSize(400,400);
-        sleepButton.setPosition(Gdx.graphics.getWidth()-500,40);
+//        sleepButton.setPosition(Gdx.graphics.getWidth()-500,40);
         sleepButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y){
                 gameState = states[1];
@@ -69,11 +76,11 @@ public class Dorm {
         });
 
         //Study Button
-        studyImg = new Texture(Gdx.files.internal("data/studyButton.png"));
+        studyImg = new Texture(Gdx.files.internal("data/dorm/studyButton.png"));
         studyRegion = new TextureRegion(studyImg);
         studyDrawable = new TextureRegionDrawable(studyRegion);
         studyButton = new ImageButton(studyDrawable);
-        studyButton.setSize(400,400);
+//        studyButton.setSize(400,400);
         studyButton.setPosition(0,40);
         studyButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y){
@@ -82,7 +89,7 @@ public class Dorm {
         });
 
         //Fitness Button
-        fitnessImg = new Texture(Gdx.files.internal("data/fitnessButton.png"));
+        fitnessImg = new Texture(Gdx.files.internal("data/dorm/fitnessButton.png"));
         fitnessRegion = new TextureRegion(fitnessImg);
         fitnessDrawable = new TextureRegionDrawable(fitnessRegion);
         fitnessButton = new ImageButton(fitnessDrawable);
@@ -95,7 +102,7 @@ public class Dorm {
         });
 
         //Hunger Button
-        hungerImg = new Texture(Gdx.files.internal("data/hungerButton.png"));
+        hungerImg = new Texture(Gdx.files.internal("data/dorm/hungerButton.png"));
         hungerRegion = new TextureRegion(hungerImg);
         hungerDrawable = new TextureRegionDrawable(hungerRegion);
         hungerButton = new ImageButton(hungerDrawable);
@@ -108,11 +115,11 @@ public class Dorm {
         });
 
         //Background
-        bg = new Texture(Gdx.files.internal("data/bg.jpeg"));
-        region = new TextureRegion(bg, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
+        bg = new Texture(Gdx.files.internal("data/dorm/dormBG.png"));
+        region = new TextureRegion(bg, 0, 0, Gdx.graphics.getWidth(), 1960);
 
         //Staging
-        stage = new Stage(new ScreenViewport());
+        stage = new Stage();
         stage.addActor(sleepButton);
         stage.addActor(hungerButton);
         stage.addActor(fitnessButton);
@@ -129,5 +136,12 @@ public class Dorm {
 
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
+    }
+
+    public void resize(int width, int height){
+        camera.viewportWidth = width;
+        camera.viewportHeight = height;
+        //you can move it to whatever position you want here
+        camera.update();
     }
 }

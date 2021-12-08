@@ -109,20 +109,20 @@ public class Hunger {
         if(Gdx.input.isKeyPressed(Input.Keys.DPAD_RIGHT)){
             player_facing = "right";
             if(player_x<Gdx.graphics.getWidth()-330){ //Keeps player from walking off screen
-                player_x += 4;
+                player_x += 8;
             }
         }
         else if(Gdx.input.isKeyPressed(Input.Keys.DPAD_LEFT)){
             player_facing = "left";
             if(player_x>-200){ //Keeps player from walking off screen
-                player_x -= 4;
+                player_x -= 8;
             }
         }
 
 
         /* ====== FALLING FOOD ====== */
         /* spawning */
-        int rand = ThreadLocalRandom.current().nextInt(2,6)%Gdx.graphics.getWidth();
+        int rand = ThreadLocalRandom.current().nextInt(1,3)%Gdx.graphics.getWidth();
 
         if(foodTimer >= rand){
             food = new Food(foodList);
@@ -135,13 +135,24 @@ public class Hunger {
         /* hitbox */
         for(Food food : foodList){
             if(food!=null){
-                food.visiblebox.begin(ShapeRenderer.ShapeType.Filled);
-                food.visiblebox.setColor(71/255f,31/255f,0/255f,1);
-                food.visiblebox.rect(food.x, food.y, 100, 100);
-                food.rect.set(food.x, food.y, 100, 100);
-                food.visiblebox.end();
+                if(food.goodOrBad==1 || food.goodOrBad==4){ //The food is one you want to catch
+                    food.visiblebox.begin(ShapeRenderer.ShapeType.Filled);
+                    food.visiblebox.setColor(71/255f,31/255f,0/255f,1);
+                    food.visiblebox.rect(food.x, food.y, 100, 100);
+                    food.rect.set(food.x, food.y, 100, 100);
+                    food.visiblebox.end();
+                }
+                else{ // The food is rotten/garbage and you don't want to catch it
+                    food.visiblebox.begin(ShapeRenderer.ShapeType.Filled);
+                    food.visiblebox.setColor(255/255f,0/255f,0/255f,1);
+                    food.visiblebox.rect(food.x, food.y, 100, 100);
+                    food.rect.set(food.x, food.y, 100, 100);
+                    //Hygeine down
+                    food.visiblebox.end();
+                }
+
                 /* movement */
-                food.y -= 2;
+                food.y -= 15;
             }
 
             if(hitbox.overlaps(food.rect)){ //If the player catches the food
@@ -177,11 +188,13 @@ public class Hunger {
         ShapeRenderer visiblebox = new ShapeRenderer();
         Rectangle rect = new Rectangle();
         int x;
-        int y = 1000;
+        int y = 1920;
+        int goodOrBad; // 1,2,3 means good  //4 means bad
 
         Food(ArrayList<Food> foodList){
             foodList.add(this);
             x=ThreadLocalRandom.current().nextInt(0,99999)%Gdx.graphics.getWidth();
+            goodOrBad=ThreadLocalRandom.current().nextInt(0,4);
         }
     }
 }
