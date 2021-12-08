@@ -27,7 +27,7 @@ public class Study implements InputProcessor {
     //boolean in_game = true;
     boolean dead = false;
     final int BLOCK_SIZE = 24;
-    final int NUM_BLOCKS = 15;
+    final int NUM_BLOCKS = 10;//15
     final int MAX_GHOSTS = 12;
     final int PLAYER_SPEED = 6;
     int num_ghosts = 6;
@@ -166,6 +166,7 @@ public class Study implements InputProcessor {
         sleep = 0;
         study = 0;
 
+        ghost_speed = new int[num_ghosts];//added by me
         for(int i = 0; i<NUM_BLOCKS*NUM_BLOCKS; i++){
             screenData[i]=level_data[i];
         }
