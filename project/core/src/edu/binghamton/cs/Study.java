@@ -16,16 +16,16 @@ import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import java.awt.Dimension;
 
-public class Study implements InputProcessor{
+public class Study {
     String[] states= {"dorm_loop", "sleep_minigame", "food_minigame", "study_minigame", "sport_minigame"};
     String gameState = states[3];
-    Stage stage;
+    Stage stage, stage2;
     SpriteBatch batch;
     BitmapFont font;
 
     private Dimension d;
     //boolean in_game = true;
-    boolean dead = false;
+    boolean dead;
     final int BLOCK_SIZE = 24;
     final int NUM_BLOCKS = 10;//15
     final int MAX_GHOSTS = 12;
@@ -77,6 +77,11 @@ public class Study implements InputProcessor{
     TextureRegion rightRegion;
     TextureRegionDrawable rightDrawable;
     ImageButton rightButton;
+    //BACK Button
+    Texture backImg;
+    TextureRegion backRegion;
+    TextureRegionDrawable backDrawable;
+    ImageButton backButton;
 
     public void create(){
         //player images
@@ -153,6 +158,18 @@ public class Study implements InputProcessor{
                 player_dy = 0;
             }
         });
+        //BackButton
+        backImg = new Texture(Gdx.files.internal("study/backButton.jpg"));
+        backRegion = new TextureRegion(backImg);
+        backDrawable = new TextureRegionDrawable(backRegion);
+        backButton = new ImageButton(backDrawable);
+        backButton.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        backButton.setPosition(Gdx.graphics.getWidth()-500,40);
+        backButton.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y){
+                gameState = states[0];//NOT WORKING BUT A LATER PROBLEM
+            }
+        });
 
         screenData = new short[NUM_BLOCKS*NUM_BLOCKS];
         dx= new int [4];
@@ -202,7 +219,8 @@ public class Study implements InputProcessor{
         stage.addActor(downButton);
         stage.addActor(leftButton);
         stage.addActor(rightButton);
-        //Gdx.input.setInputProcessor(stage);
+        stage2 = new Stage(new ScreenViewport());
+        stage2.addActor(backButton);
     }
 
     public void render(){
@@ -219,8 +237,9 @@ public class Study implements InputProcessor{
             font.draw(batch, "Health, Hygiene, sleep, and study stats are as follows: "+health_f+" "+hygiene_f+" "+sleep_f+" "+study_f, 0, Gdx.graphics.getHeight(),Gdx.graphics.getWidth(),10,true);
             batch.end();
 
+            stage2.act(Gdx.graphics.getDeltaTime());
+            stage2.draw();
         }else{
-            //Gdx.input.setInputProcessor(stage);
             Gdx.gl.glClearColor(1,1,1,1);
             Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT);
 
@@ -228,7 +247,7 @@ public class Study implements InputProcessor{
             short ch;
             if(player_x%BLOCK_SIZE == 0 && player_y%BLOCK_SIZE == 0){ // find pos of player
                 pos = player_x / BLOCK_SIZE + NUM_BLOCKS * (int) (player_y / BLOCK_SIZE);
-               // ch = screenData[pos];
+                //ch = screenData[pos];//====================================================================
 
                 //10 x 10 POSITIONS: 0 = BLOCKS; 1 = LEFT; 2 = TOP; 4 = RIGHT; 8 = BOTTOM;
                 if(req_dx !=0 || req_dy !=0){
@@ -246,48 +265,5 @@ public class Study implements InputProcessor{
             stage.act(Gdx.graphics.getDeltaTime());
             stage.draw();
         }
-    }
-
-    @Override
-    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        if(dead){
-            gameState = states[0];
-        }
-        return true;
-    }
-
-    @Override
-    public boolean keyDown(int keycode) {
-        return false;
-    }
-
-    @Override
-    public boolean keyUp(int keycode) {
-        return false;
-    }
-
-    @Override
-    public boolean keyTyped(char character) {
-        return false;
-    }
-
-    @Override
-    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        return false;
-    }
-
-    @Override
-    public boolean touchDragged(int screenX, int screenY, int pointer) {
-        return false;
-    }
-
-    @Override
-    public boolean mouseMoved(int screenX, int screenY) {
-        return false;
-    }
-
-    @Override
-    public boolean scrolled(float amountX, float amountY) {
-        return false;
     }
 }
