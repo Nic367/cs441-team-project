@@ -85,6 +85,7 @@ public class Dorm {
         studyButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y){
                 gameState = states[3];
+                System.out.println("WE PRESSED THE BUTTON");
             }
         });
 

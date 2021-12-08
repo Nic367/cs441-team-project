@@ -16,7 +16,7 @@ import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import java.awt.Dimension;
 
-public class Study implements InputProcessor {
+public class Study implements InputProcessor{
     String[] states= {"dorm_loop", "sleep_minigame", "food_minigame", "study_minigame", "sport_minigame"};
     String gameState = states[3];
     Stage stage;
@@ -202,7 +202,7 @@ public class Study implements InputProcessor {
         stage.addActor(downButton);
         stage.addActor(leftButton);
         stage.addActor(rightButton);
-        Gdx.input.setInputProcessor(stage);
+        //Gdx.input.setInputProcessor(stage);
     }
 
     public void render(){
@@ -220,7 +220,7 @@ public class Study implements InputProcessor {
             batch.end();
 
         }else{
-            Gdx.input.setInputProcessor(stage);
+            //Gdx.input.setInputProcessor(stage);
             Gdx.gl.glClearColor(1,1,1,1);
             Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT);
 
@@ -228,7 +228,7 @@ public class Study implements InputProcessor {
             short ch;
             if(player_x%BLOCK_SIZE == 0 && player_y%BLOCK_SIZE == 0){ // find pos of player
                 pos = player_x / BLOCK_SIZE + NUM_BLOCKS * (int) (player_y / BLOCK_SIZE);
-                ch = screenData[pos];
+               // ch = screenData[pos];
 
                 //10 x 10 POSITIONS: 0 = BLOCKS; 1 = LEFT; 2 = TOP; 4 = RIGHT; 8 = BOTTOM;
                 if(req_dx !=0 || req_dy !=0){

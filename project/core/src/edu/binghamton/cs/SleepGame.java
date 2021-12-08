@@ -56,7 +56,7 @@ public class SleepGame implements Screen {
         screenWidth = Gdx.graphics.getWidth();
         screenHeight = Gdx.graphics.getHeight();
 
-        track = Gdx.audio.newMusic(Gdx.files.internal("data/imonlysleeping.mp3"));
+//        track = Gdx.audio.newMusic(Gdx.files.internal("data/imonlysleeping.mp3"));
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false);
@@ -118,7 +118,7 @@ public class SleepGame implements Screen {
 
     @Override
     public void show() {
-        track.play();
+//        track.play();
     }
 
     public void update(float dt){
@@ -225,6 +225,6 @@ public class SleepGame implements Screen {
 
         tileImage.dispose();
         sleeperImage.dispose();
-        track.dispose();
+//        track.dispose();
     }
 }
