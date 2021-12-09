@@ -61,6 +61,7 @@ public class TeamProject extends ApplicationAdapter {
 		else if(gameState==HUNGER){
 			hunger.render();
 			gameState = hunger.gameState;
+			System.out.println("were playing this");
 		}
 		else if(gameState==STUDY){
 			study.render();

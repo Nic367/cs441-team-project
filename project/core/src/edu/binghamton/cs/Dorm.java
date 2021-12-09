@@ -73,7 +73,7 @@ public class Dorm {
         studyRegion = new TextureRegion(studyImg);
         studyDrawable = new TextureRegionDrawable(studyRegion);
         studyButton = new ImageButton(studyDrawable);
-        studyButton.setSize(400,400);
+//        studyButton.setSize(400,400);
         studyButton.setPosition(0,40);
         studyButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y){
@@ -86,8 +86,8 @@ public class Dorm {
         fitnessRegion = new TextureRegion(fitnessImg);
         fitnessDrawable = new TextureRegionDrawable(fitnessRegion);
         fitnessButton = new ImageButton(fitnessDrawable);
-        fitnessButton.setSize(200,200);
-        fitnessButton.setPosition(Gdx.graphics.getWidth()-300,500);
+        fitnessButton.setSize(1092,1094);
+//        fitnessButton.setPosition(0,0);
         fitnessButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y){
                 gameState = states[4];
@@ -99,8 +99,8 @@ public class Dorm {
         hungerRegion = new TextureRegion(hungerImg);
         hungerDrawable = new TextureRegionDrawable(hungerRegion);
         hungerButton = new ImageButton(hungerDrawable);
-        hungerButton.setSize(400,400);
-        hungerButton.setPosition(0,500);
+        hungerButton.setSize(2000,2000);
+        hungerButton.setPosition(245,520);
         hungerButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y){
                 gameState = states[2];
@@ -108,7 +108,7 @@ public class Dorm {
         });
 
         //Background
-        bg = new Texture(Gdx.files.internal("data/bg.jpeg"));
+        bg = new Texture(Gdx.files.internal("data/dorm/dormBG.png"));
         region = new TextureRegion(bg, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
 
         //Staging
@@ -124,7 +124,7 @@ public class Dorm {
         Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT);
 
         batch.begin();
-        batch.draw(region,0,0);
+        batch.draw(bg,0,0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         batch.end();
 
         stage.act(Gdx.graphics.getDeltaTime());

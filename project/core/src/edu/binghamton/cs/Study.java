@@ -228,7 +228,7 @@ public class Study implements InputProcessor{
             short ch;
             if(player_x%BLOCK_SIZE == 0 && player_y%BLOCK_SIZE == 0){ // find pos of player
                 pos = player_x / BLOCK_SIZE + NUM_BLOCKS * (int) (player_y / BLOCK_SIZE);
-               // ch = screenData[pos];
+                // ch = screenData[pos];
 
                 //10 x 10 POSITIONS: 0 = BLOCKS; 1 = LEFT; 2 = TOP; 4 = RIGHT; 8 = BOTTOM;
                 if(req_dx !=0 || req_dy !=0){

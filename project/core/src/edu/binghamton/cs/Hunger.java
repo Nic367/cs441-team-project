@@ -22,7 +22,8 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class Hunger {
     String[] states= {"dorm_loop", "sleep_minigame", "food_minigame", "study_minigame", "sport_minigame"};
-    String gameState = states[2];
+    String gameState;
+    int foodCaught = 0;
 
     // Renderables
     Stage stage;
@@ -53,6 +54,7 @@ public class Hunger {
     TextureRegion region;
 
     public void create(){
+        gameState = states[2];
         //Player
         hitboxC = new ShapeRenderer();
         hitbox = new Rectangle();
@@ -82,6 +84,10 @@ public class Hunger {
     public void render(){
         Gdx.input.setInputProcessor(stage);
         Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT);
+
+        if(foodCaught==3){
+            this.gameState = states[0];
+        }
 
         /* ====== Text ====== */
         batch.begin();
@@ -157,6 +163,7 @@ public class Hunger {
 
             if(hitbox.overlaps(food.rect)){ //If the player catches the food
                 caughtFoodList.add(food);
+                foodCaught++;
             }
 
             if(food.y<= 20){  //Check if food hit the ground

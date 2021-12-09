@@ -137,64 +137,67 @@ public class SleepGame implements Screen {
 
     @Override
     public void render(float delta) {
-        update(delta);
-        ScreenUtils.clear(0,0,1,1);
+        if(timer>1){
+            update(delta);
+            ScreenUtils.clear(0,0,1,1);
 
 
-        game.batch.begin();
-        game.batch.draw(sleeperImage, 0.5f*screenWidth-150,0.5f*screenHeight-250,300,500);
-        for(Rectangle i: tiles){
-            game.batch.draw(tileImage, i.x, i.y, 200, 200);
-        }
-        game.font.draw(game.batch, "Time: " + timer, screenWidth-350, screenHeight-100);
-        game.batch.end();
-
-
-
-        //if(TimeUtils.nanoTime() - tileTime > 550000000) createTiles();
-
-        for(Iterator<Rectangle> iterator = tiles.iterator(); iterator.hasNext();){
-            Rectangle tile = iterator.next();
-            //Left to center
-            if(tile.x < screenWidth*0.5f) {
-                tile.x += 1500 * Gdx.graphics.getDeltaTime();
-                if(Gdx.input.isKeyJustPressed(Input.Keys.LEFT))
-                    iterator.remove();
+            game.batch.begin();
+            game.batch.draw(sleeperImage, 0.5f*screenWidth-150,0.5f*screenHeight-250,300,500);
+            for(Rectangle i: tiles){
+                game.batch.draw(tileImage, i.x, i.y, 200, 200);
             }
-            //Right to center
-            else if(tile.x > screenWidth*0.5f) {
-                tile.x -= 1500 * Gdx.graphics.getDeltaTime();
-                if(Gdx.input.isKeyJustPressed(Input.Keys.RIGHT))
+            game.font.draw(game.batch, "Time: " + timer, screenWidth-350, screenHeight-100);
+            game.batch.end();
+
+
+
+            //if(TimeUtils.nanoTime() - tileTime > 550000000) createTiles();
+
+            for(Iterator<Rectangle> iterator = tiles.iterator(); iterator.hasNext();){
+                Rectangle tile = iterator.next();
+                //Left to center
+                if(tile.x < screenWidth*0.5f) {
+                    tile.x += 1500 * Gdx.graphics.getDeltaTime();
+                    if(Gdx.input.isKeyJustPressed(Input.Keys.LEFT))
+                        iterator.remove();
+                }
+                //Right to center
+                else if(tile.x > screenWidth*0.5f) {
+                    tile.x -= 1500 * Gdx.graphics.getDeltaTime();
+                    if(Gdx.input.isKeyJustPressed(Input.Keys.RIGHT))
+                        iterator.remove();
+                }
+                //Top to center
+                else if(tile.y > screenHeight*0.5f){
+                    tile.y -= 2000 * Gdx.graphics.getDeltaTime();
+                    if(Gdx.input.isKeyJustPressed(Input.Keys.UP))
+                        iterator.remove();
+                }
+                //Bottom to center
+                else {
+                    tile.y += 2000 * Gdx.graphics.getDeltaTime();
+                    if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN))
+                        iterator.remove();
+                }
+                if(Gdx.input.isTouched()){
+                    Vector3 touchpos = new Vector3();
+                    touchpos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
+                    camera.unproject(touchpos);
+                    if(tile.contains(touchpos.x, touchpos.y))
+                        iterator.remove();
+                }
+                if(tile.overlaps(sleeper))
                     iterator.remove();
+
             }
-            //Top to center
-            else if(tile.y > screenHeight*0.5f){
-                tile.y -= 2000 * Gdx.graphics.getDeltaTime();
-                if(Gdx.input.isKeyJustPressed(Input.Keys.UP))
-                    iterator.remove();
-            }
-            //Bottom to center
-            else {
-                tile.y += 2000 * Gdx.graphics.getDeltaTime();
-                if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN))
-                    iterator.remove();
-            }
-            if(Gdx.input.isTouched()){
-                Vector3 touchpos = new Vector3();
-                touchpos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
-                camera.unproject(touchpos);
-                if(tile.contains(touchpos.x, touchpos.y))
-                    iterator.remove();
-            }
-            if(tile.overlaps(sleeper))
-                iterator.remove();
 
         }
 
         // END OF GAME
         if(timer < 1){
             System.out.println("TIME");
-            //game.gameState = game.states[0];
+            game.gameState = game.states[0];
             //dorm.render();
             //dispose();
         }
