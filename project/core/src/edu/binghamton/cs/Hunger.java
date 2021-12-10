@@ -49,6 +49,7 @@ public class Hunger {
     Food food;
     float foodTimer=0;
 
+
     // Game Background
     Texture bg;
     TextureRegion region;

@@ -37,11 +37,29 @@ public class Dorm {
     Texture bg;
     TextureRegion region;
 
+    //Entertainment Button
+    Texture entertainmentImg;
+    TextureRegion entertainmentRegion;
+    TextureRegionDrawable entertainmentDrawable;
+    ImageButton entertainmentButton;
+
     //Sleep Button
     Texture sleepImg;
     TextureRegion sleepRegion;
     TextureRegionDrawable sleepDrawable;
     ImageButton sleepButton;
+
+    //Sleep Button 2
+    Texture sleepImg2;
+    TextureRegion sleepRegion2;
+    TextureRegionDrawable sleepDrawable2;
+    ImageButton sleepButton2;
+
+    //Door Button
+    Texture doorImg;
+    TextureRegion doorRegion;
+    TextureRegionDrawable doorDrawable;
+    ImageButton doorButton;
 
     //Study Button
     Texture studyImg;
@@ -87,6 +105,19 @@ public class Dorm {
             }
         });
 
+        //Sleep Button Second half
+        sleepImg2 = new Texture(Gdx.files.internal("data/dorm/sleepButton2.png"));
+        sleepRegion2 = new TextureRegion(sleepImg2);
+        sleepDrawable2 = new TextureRegionDrawable(sleepRegion2);
+        sleepButton2 = new ImageButton(sleepDrawable2);
+        sleepButton2.getImage().setScale(1.6f);
+        sleepButton2.setPosition(Gdx.graphics.getWidth()-880,Gdx.graphics.getHeight()-920);
+        sleepButton2.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y){
+                gameState = states[1];
+            }
+        });
+
         //Study Button
         studyImg = new Texture(Gdx.files.internal("data/dorm/studyButton.png"));
         studyRegion = new TextureRegion(studyImg);
@@ -126,6 +157,32 @@ public class Dorm {
             }
         });
 
+        //Door Button
+        doorImg = new Texture(Gdx.files.internal("data/dorm/doorButton.png"));
+        doorRegion = new TextureRegion(doorImg);
+        doorDrawable = new TextureRegionDrawable(doorRegion);
+        doorButton = new ImageButton(doorDrawable);
+        doorButton.getImage().setScale(1.5f);
+        doorButton.setPosition(0,Gdx.graphics.getHeight()-1440);
+        doorButton.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y){
+                //Change bool inBathroom to true. In render make char walk to door and vanish for 5 secs
+            }
+        });
+
+        //Entertainment Button
+        entertainmentImg = new Texture(Gdx.files.internal("data/dorm/entertainmentButton.png"));
+        entertainmentRegion = new TextureRegion(entertainmentImg);
+        entertainmentDrawable = new TextureRegionDrawable(entertainmentRegion);
+        entertainmentButton = new ImageButton(entertainmentDrawable);
+        entertainmentButton.getImage().setScale(1.5f);
+        entertainmentButton.setPosition(Gdx.graphics.getWidth()-375,Gdx.graphics.getHeight()-635);
+        entertainmentButton.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y){
+                //Change bool inBathroom to true. In render make char walk to door and vanish for 5 secs
+            }
+        });
+
         //Background
         bg = new Texture(Gdx.files.internal("data/dorm/dormBG.png"));
         region = new TextureRegion(bg, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
@@ -136,17 +193,20 @@ public class Dorm {
         stage.addActor(hungerButton);
         stage.addActor(fitnessButton);
         stage.addActor(studyButton);
+        stage.addActor(entertainmentButton);
+        stage.addActor(doorButton);
+        stage.addActor(sleepButton2);
         Gdx.input.setInputProcessor(stage);
     }
 
     public void render(){
         Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT);
 
+        stage.act(Gdx.graphics.getDeltaTime());
+        stage.draw();
+
         batch.begin();
         batch.draw(bg,0,0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         batch.end();
-
-        stage.act(Gdx.graphics.getDeltaTime());
-        stage.draw();
     }
 }
