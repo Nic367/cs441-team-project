@@ -196,10 +196,10 @@ public class Dorm {
         stage.addActor(entertainmentButton);
         stage.addActor(doorButton);
         stage.addActor(sleepButton2);
-        Gdx.input.setInputProcessor(stage);
     }
 
     public void render(){
+        Gdx.input.setInputProcessor(stage);
         Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT);
 
         stage.act(Gdx.graphics.getDeltaTime());
