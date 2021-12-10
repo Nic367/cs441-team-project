@@ -105,8 +105,8 @@ public class Dorm {
         fitnessRegion = new TextureRegion(fitnessImg);
         fitnessDrawable = new TextureRegionDrawable(fitnessRegion);
         fitnessButton = new ImageButton(fitnessDrawable);
-//        fitnessButton.setSize(1092,1094);
-//        fitnessButton.setPosition(0,0);
+        fitnessButton.getImage().setScale(1.6f);
+        fitnessButton.setPosition(Gdx.graphics.getWidth()-1020,Gdx.graphics.getHeight()-310);
         fitnessButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y){
                 gameState = states[4];
@@ -118,7 +118,8 @@ public class Dorm {
         hungerRegion = new TextureRegion(hungerImg);
         hungerDrawable = new TextureRegionDrawable(hungerRegion);
         hungerButton = new ImageButton(hungerDrawable);
-        hungerButton.setPosition(245,520);
+        hungerButton.getImage().setScale(1.6f);
+        hungerButton.setPosition(Gdx.graphics.getWidth()/2-105,Gdx.graphics.getHeight()/2-30);
         hungerButton.addListener(   new ClickListener() {
             public void clicked(InputEvent event, float x, float y){
                 gameState = states[2];
