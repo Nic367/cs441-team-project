@@ -102,7 +102,7 @@ public class Study {
         book3 = new Texture(Gdx.files.internal("study/img08.png"));
 
         //directions
-        upImg = new Texture(Gdx.files.internal("study/upButton.jpg"));
+        upImg = new Texture(Gdx.files.internal("study/upButton.png"));
         upRegion = new TextureRegion(upImg);
         upDrawable = new TextureRegionDrawable(upRegion);
         upButton = new ImageButton(upDrawable);
@@ -116,7 +116,7 @@ public class Study {
                 player_dy = player_dy;
             }
         });
-        downImg = new Texture(Gdx.files.internal("study/downButton.jpg"));
+        downImg = new Texture(Gdx.files.internal("study/downButton.png"));
         downRegion = new TextureRegion(downImg);
         downDrawable = new TextureRegionDrawable(downRegion);
         downButton = new ImageButton(downDrawable);
@@ -130,7 +130,7 @@ public class Study {
                 player_dy = -player_dy;
             }
         });
-        leftImg = new Texture(Gdx.files.internal("study/leftButton.jpg"));
+        leftImg = new Texture(Gdx.files.internal("study/leftButton.png"));
         leftRegion = new TextureRegion(leftImg);
         leftDrawable = new TextureRegionDrawable(leftRegion);
         leftButton = new ImageButton(leftDrawable);
@@ -144,7 +144,7 @@ public class Study {
                 player_dy = 0;
             }
         });
-        rightImg = new Texture(Gdx.files.internal("study/rightButton.jpg"));
+        rightImg = new Texture(Gdx.files.internal("study/rightButton.png"));
         rightRegion = new TextureRegion(rightImg);
         rightDrawable = new TextureRegionDrawable(rightRegion);
         rightButton = new ImageButton(rightDrawable);

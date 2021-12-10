@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -17,11 +18,20 @@ public class Dorm {
     String[] states= {"dorm_loop", "sleep_minigame", "food_minigame", "study_minigame", "sport_minigame"};
     String gameState = states[0];
 
+    //Needs
+    int sleepNeed;
+    int studyNeed;
+    int hungerNeed;
+    int bathroomNeed;
+    int fitnessNeed;
+    int funNeed;
+    int[] needs;
+
+
     //Renderables
     Stage stage;
     SpriteBatch batch;
     Texture img;
-
 
     //Game Background
     Texture bg;
@@ -50,9 +60,18 @@ public class Dorm {
     TextureRegion hungerRegion;
     TextureRegionDrawable hungerDrawable;
     ImageButton hungerButton;
+    Table hungerTable;
 
     public void create(){
         batch = new SpriteBatch();
+
+        //Setting up needs
+        sleepNeed = 4;
+        studyNeed = 4;
+        hungerNeed = 4;
+        bathroomNeed = 4;
+        fitnessNeed = 4;
+        funNeed = 4;
 
 
         //Sleep Button
@@ -60,8 +79,8 @@ public class Dorm {
         sleepRegion = new TextureRegion(sleepImg);
         sleepDrawable = new TextureRegionDrawable(sleepRegion);
         sleepButton = new ImageButton(sleepDrawable);
-        sleepButton.setSize(400,400);
-        sleepButton.setPosition(Gdx.graphics.getWidth()-500,40);
+        sleepButton.getImage().setScale(1.5f);
+        sleepButton.setPosition(Gdx.graphics.getWidth()-1250,Gdx.graphics.getHeight()-1150);
         sleepButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y){
                 gameState = states[1];
@@ -73,8 +92,8 @@ public class Dorm {
         studyRegion = new TextureRegion(studyImg);
         studyDrawable = new TextureRegionDrawable(studyRegion);
         studyButton = new ImageButton(studyDrawable);
-//        studyButton.setSize(400,400);
-        studyButton.setPosition(0,40);
+        studyButton.getImage().setScale(1.5f);
+        studyButton.setPosition(Gdx.graphics.getWidth()-275,Gdx.graphics.getHeight()-890);
         studyButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y){
                 gameState = states[3];
@@ -86,7 +105,7 @@ public class Dorm {
         fitnessRegion = new TextureRegion(fitnessImg);
         fitnessDrawable = new TextureRegionDrawable(fitnessRegion);
         fitnessButton = new ImageButton(fitnessDrawable);
-        fitnessButton.setSize(1092,1094);
+//        fitnessButton.setSize(1092,1094);
 //        fitnessButton.setPosition(0,0);
         fitnessButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y){
@@ -99,9 +118,8 @@ public class Dorm {
         hungerRegion = new TextureRegion(hungerImg);
         hungerDrawable = new TextureRegionDrawable(hungerRegion);
         hungerButton = new ImageButton(hungerDrawable);
-        hungerButton.setSize(2000,2000);
         hungerButton.setPosition(245,520);
-        hungerButton.addListener(new ClickListener() {
+        hungerButton.addListener(   new ClickListener() {
             public void clicked(InputEvent event, float x, float y){
                 gameState = states[2];
             }
