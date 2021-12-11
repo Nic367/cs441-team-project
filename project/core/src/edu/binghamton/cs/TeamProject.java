@@ -76,7 +76,7 @@ public class TeamProject extends ApplicationAdapter {
 
 	@Override
 	public void dispose () {
-		dorm_batch.dispose();
+//		dorm_batch.dispose();
 		img.dispose();
 	}
 }

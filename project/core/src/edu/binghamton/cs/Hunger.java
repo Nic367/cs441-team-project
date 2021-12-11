@@ -32,7 +32,7 @@ public class Hunger {
 
     // Timer
     BitmapFont timer_text;
-    long timer, initial_time=TimeUtils.nanoTime();;
+    long timer, initial_time=TimeUtils.nanoTime();
 
     // Player
     ShapeRenderer hitboxC;

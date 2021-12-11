@@ -12,20 +12,37 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+
+import java.util.ArrayList;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Dorm {
     String[] states= {"dorm_loop", "sleep_minigame", "food_minigame", "study_minigame", "sport_minigame"};
     String gameState = states[0];
 
     //Needs
-    int sleepNeed;
-    int studyNeed;
-    int hungerNeed;
-    int bathroomNeed;
-    int fitnessNeed;
-    int funNeed;
-    int[] needs;
+    public float timer = 0;
+    int[] needs = {7, 7, 7, 7, 7, 7}; //Sleep=0, Study=1, bathroom=2, fun=3, hunger=4, fitness=5
+
+    //Status Bars (8 levels. 0=Empty. 8=Full)
+    ArrayList<Texture> statusBars = new ArrayList<>();
+    Texture sleepStatus;
+    Texture studyStatus;
+    Texture bathroomStatus;
+    Texture happinessStatus;
+    Texture hungerStatus;
+    Texture fitnessStatus;
+    String status0 = "data/dorm/status0.png";
+    String status1 = "data/dorm/status1.png";
+    String status2 = "data/dorm/status2.png";
+    String status3 = "data/dorm/status3.png";
+    String status4 = "data/dorm/status4.png";
+    String status5 = "data/dorm/status5.png";
+    String status6 = "data/dorm/status6.png";
+    String status7 = "data/dorm/status7.png";
+    String status8 = "data/dorm/status8.png";
 
 
     //Renderables
@@ -82,15 +99,6 @@ public class Dorm {
 
     public void create(){
         batch = new SpriteBatch();
-
-        //Setting up needs
-        sleepNeed = 4;
-        studyNeed = 4;
-        hungerNeed = 4;
-        bathroomNeed = 4;
-        fitnessNeed = 4;
-        funNeed = 4;
-
 
         //Sleep Button
         sleepImg = new Texture(Gdx.files.internal("data/dorm/sleepButton.png"));
@@ -185,7 +193,20 @@ public class Dorm {
 
         //Background
         bg = new Texture(Gdx.files.internal("data/dorm/dormBG.png"));
-        region = new TextureRegion(bg, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
+
+        //Status Bars
+        sleepStatus = new Texture(Gdx.files.internal(status8));
+        studyStatus = new Texture(Gdx.files.internal(status8));
+        bathroomStatus = new Texture(Gdx.files.internal(status8));
+        hungerStatus = new Texture(Gdx.files.internal(status8));
+        happinessStatus = new Texture(Gdx.files.internal(status8));
+        fitnessStatus = new Texture(Gdx.files.internal(status8));
+        statusBars.add(sleepStatus);
+        statusBars.add(studyStatus);
+        statusBars.add(bathroomStatus);
+        statusBars.add(happinessStatus);
+        statusBars.add(hungerStatus);
+        statusBars.add(fitnessStatus);
 
         //Staging
         stage = new Stage(new ScreenViewport());
@@ -207,6 +228,48 @@ public class Dorm {
 
         batch.begin();
         batch.draw(bg,0,0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        int x = 100;
+        for(int i=0; i<6; i++){
+            batch.draw(statusBars.get(i),x,110,140,350);
+            x+=215;
+        }
         batch.end();
+
+
+        int rand = ThreadLocalRandom.current().nextInt(5,10)%Gdx.graphics.getWidth();
+        int needIndex = ThreadLocalRandom.current().nextInt(0,6)%Gdx.graphics.getWidth();
+
+        if(timer >= rand){
+            timer=0;
+            if(needs[needIndex]>0){
+                needs[needIndex]--;
+                updateStatusBars(needIndex);
+            }
+        }
+        else{
+            timer+=Gdx.graphics.getDeltaTime();
+        }
+    }
+
+    public void updateStatusBars(int index) {
+        if (needs[index] == 8) {
+            statusBars.set(index, new Texture(Gdx.files.internal(status8)));
+        } else if (needs[index] == 7) {
+            statusBars.set(index, new Texture(Gdx.files.internal(status7)));
+        } else if (needs[index] == 6) {
+            statusBars.set(index, new Texture(Gdx.files.internal(status6)));
+        } else if (needs[index] == 5) {
+            statusBars.set(index, new Texture(Gdx.files.internal(status5)));
+        } else if (needs[index] == 4) {
+            statusBars.set(index, new Texture(Gdx.files.internal(status4)));
+        } else if (needs[index] == 3) {
+            statusBars.set(index, new Texture(Gdx.files.internal(status3)));
+        } else if (needs[index] == 2) {
+            statusBars.set(index, new Texture(Gdx.files.internal(status2)));
+        } else if (needs[index] == 1) {
+            statusBars.set(index, new Texture(Gdx.files.internal(status1)));
+        } else if (needs[index] == 0) {
+            statusBars.set(index, new Texture(Gdx.files.internal(status0)));
+        }
     }
 }
