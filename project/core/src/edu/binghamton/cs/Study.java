@@ -152,6 +152,7 @@ public class Study {
         rightButton.setPosition(0,500);
         rightButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y){
+                System.out.println("RIGHT CLICKED HERE");
                 //req_dx = 1;
                 //req_dy = 0;
                 player_dx = player_dx;
@@ -159,15 +160,16 @@ public class Study {
             }
         });
         //BackButton
-        backImg = new Texture(Gdx.files.internal("study/backButton.jpg"));
+        backImg = new Texture(Gdx.files.internal("study/backButton.png"));
         backRegion = new TextureRegion(backImg);
         backDrawable = new TextureRegionDrawable(backRegion);
         backButton = new ImageButton(backDrawable);
-        backButton.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        backButton.setPosition(Gdx.graphics.getWidth()-500,40);
+        backButton.getImage().setScale(4);
+        backButton.setPosition(0, 0);
         backButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y){
-                gameState = states[0];//NOT WORKING BUT A LATER PROBLEM
+                System.out.println("BACK CLICKED HERE");
+                gameState = states[0];
             }
         });
 
@@ -212,7 +214,8 @@ public class Study {
 
         batch = new SpriteBatch();
         font = new BitmapFont();
-        font.getData().setScale(15f);
+        font.getData().setScale(10f);
+
         //Staging
         stage = new Stage(new ScreenViewport());
         stage.addActor(upButton);
@@ -225,6 +228,7 @@ public class Study {
 
     public void render(){
         if(dead){
+            Gdx.input.setInputProcessor(stage2);
             health_f = health;
             hygiene_f = hygiene;
             sleep_f = sleep;
@@ -234,12 +238,13 @@ public class Study {
             Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT);
 
             batch.begin();
-            font.draw(batch, "Health, Hygiene, sleep, and study stats are as follows: "+health_f+" "+hygiene_f+" "+sleep_f+" "+study_f, 0, Gdx.graphics.getHeight(),Gdx.graphics.getWidth(),10,true);
+            font.draw(batch,"Health, Hygiene, sleep, and study stats are as follows: "+health_f+" "+hygiene_f+" "+sleep_f+" "+study_f,0,Gdx.graphics.getHeight(),Gdx.graphics.getWidth(), 10,true);
             batch.end();
 
             stage2.act(Gdx.graphics.getDeltaTime());
             stage2.draw();
         }else{
+            Gdx.input.setInputProcessor(stage);
             Gdx.gl.glClearColor(1,1,1,1);
             Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT);
 
