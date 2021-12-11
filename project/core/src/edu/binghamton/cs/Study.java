@@ -29,7 +29,7 @@ public class Study {
     boolean dead;
     final int BLOCK_SIZE = 200;//24;
     final int NUM_BLOCKS = 7;
-    final int SCREEN_SIZE = NUM_BLOCKS * BLOCK_SIZE;//LR 7 x 7
+    final int SCREEN_SIZE = NUM_BLOCKS * BLOCK_SIZE;//1400
     final int MAX_GHOSTS = 12;
     final int PLAYER_SPEED = 6;
     int num_ghosts = 6;
@@ -47,15 +47,27 @@ public class Study {
     int current_speed = 3;
     private short [] screenData;
     private Timer timer;
-    final short [] level_data = {
-            0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0,
+    final short [] level_data = { //flipped upside down!!
+            1, 1, 1, 1, 1, 1, 1,
+            1, 0, 0, 0, 0, 16, 1,
+            1, 0, 16, 0, 0, 0, 1,
+            1, 0, 0, 0, 0, 16, 1,
+            1, 0, 0, 0, 0, 0, 1,
+            1, 16, 0, 0, 16, 0, 1,
+            1, 0, 0, 0, 0, 0, 1,
     };//10 x 10 POSITIONS: 0 = BLOCKS; 1 = LEFT; 2 = TOP; 4 = RIGHT; 8 = BOTTOM; 16 = fruit;
+
+    final int [][] screenData2 = new int[7][7];
+    final int [][] level_data2 ={//rotated 90 degrees clockwise
+            {1, 1, 1, 1, 1, 1, 1},
+            {1, 16, 0, 0, 16, 0, 0},
+            {1, 0, 0, 0, 0, 0, 0},
+            {1, 0, 0, 0, 0, 16, 0},
+            {1, 0, 16, 0, 0, 0, 0},
+            {1, 0, 0, 0, 0, 16, 0},
+            {1, 1, 1, 1, 1, 1, 1}
+    };
+
 
     //UP Button
     Texture upImg;
@@ -82,6 +94,9 @@ public class Study {
     TextureRegion backRegion;
     TextureRegionDrawable backDrawable;
     ImageButton backButton;
+
+    public Study() {
+    }
 
     public void create(){
         blocks = new Texture(Gdx.files.internal("badlogic.jpg"));
@@ -190,9 +205,22 @@ public class Study {
         study = 0;
 
         ghost_speed = new int[num_ghosts];//added by me
+
+
+
+
+
         for(int i = 0; i<NUM_BLOCKS*NUM_BLOCKS; i++){
             screenData[i]=level_data[i];
         }
+        for(int i = 0; i<7; i++){
+            for(int j = 0; j<7; j++){
+                screenData2[i][j]=level_data2[i][j];
+            }
+        }
+
+
+
         int temp_dx = 1;
         int random;
         for(int i = 0; i<num_ghosts; i++){
@@ -251,15 +279,20 @@ public class Study {
             Gdx.input.setInputProcessor(stage);
             Gdx.gl.glClearColor(1,1,1,1);
             Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT);
-            //CHECK FRUIT STATUS TODO
-
+            //CHECK FRUIT STATUS
+            if(study == 5){
+                dead = true;
+            }
             //MOVE PACMAN
             int pos;
             short ch;
+            //player_x=7*BLOCK_SIZE(=200); player_y = 11*BLOCK_SIZE;
             if(player_x%BLOCK_SIZE == 0 && player_y%BLOCK_SIZE == 0){ // find pos of player
-                //pos = pacman_x / BLOCK_SIZE + N_BLOCKS * (int) (pacman_y / BLOCK_SIZE); TODO
-                /*pos = player_x / BLOCK_SIZE + NUM_BLOCKS * (int) (player_y / BLOCK_SIZE);
-                ch = screenData[pos];
+                //      (7*200)/200 + 7 * (11*200)/200 = 84
+                pos = (player_x) / BLOCK_SIZE + NUM_BLOCKS * (int) ((player_y) / BLOCK_SIZE);
+                System.out.println(pos);
+
+                /*ch = screenData[pos];
 
                 //10 x 10 POSITIONS: 0 = BLOCKS; 1 = LEFT; 2 = TOP; 4 = RIGHT; 8 = BOTTOM;
                 if(req_dx !=0 || req_dy !=0){
@@ -335,7 +368,7 @@ public class Study {
                 ghost_x[i] = ghost_x[i]+(ghost_dx[i]*ghost_speed[i]);
                 ghost_y[i] = ghost_y[i]+(ghost_dy[i]*ghost_speed[i]);
                 //DRAW GHOST
-                batch.draw(netflix, player_x +1, player_y +1);//DIFF PICS TODO
+                batch.draw(netflix, player_x +1, player_y +1, BLOCK_SIZE,BLOCK_SIZE);//DIFF PICS TODO
                 //IF PLAYER TOUCHES DISTRACTIONS
                 if(player_x > (ghost_x[i] -12) && player_x < (ghost_x[i] +12)
                         && player_y > (ghost_y[i] -12) && player_y < (ghost_y[i] +12)){//if pacman
@@ -344,20 +377,43 @@ public class Study {
             }
             //DRAW PACMAN
             if(req_dx == -1){
-                batch.draw(player_left, player_x +1, player_y +1);
+                batch.draw(player_left, player_x +1, player_y +1, BLOCK_SIZE,BLOCK_SIZE);
             }else if(req_dx == 1){
-                batch.draw(player_right, player_x +1, player_y +1);
-            } else if(req_dx == -1){
-                batch.draw(player_up, player_x +1, player_y +1);
+                batch.draw(player_right, player_x +1, player_y +1, BLOCK_SIZE,BLOCK_SIZE);
+            } else if(req_dy == -1){
+                batch.draw(player_up, player_x +1, player_y +1, BLOCK_SIZE,BLOCK_SIZE);
             }else{
-                batch.draw(player_down, player_x +1, player_y +1);
+                batch.draw(player_down, player_x +1, player_y +1, BLOCK_SIZE,BLOCK_SIZE);
             }
-            //DRAW MAZE: TODO
+            //DRAW MAZE:
             int i = 0;
+            int j = 0;
             int x, y;
             for(y = 990; y<SCREEN_SIZE+990; y+=BLOCK_SIZE){
                 for(x = 20; x<SCREEN_SIZE+20; x+= BLOCK_SIZE){
+                    if(i <7 && j <7){
+                        if(screenData2[i][j] == 0){
+                            //batch.draw(blocks, x,y,BLOCK_SIZE,BLOCK_SIZE);
+                        }
+                        if((screenData2[i][j] & 1)!= 0){
+                            batch.draw(blocks, x,y,BLOCK_SIZE,BLOCK_SIZE);
+                        }
+                        if((screenData2[i][j] & 16) !=0){
+                            batch.draw(book, x,y,BLOCK_SIZE,BLOCK_SIZE);
+                        }
+                    }
+                    i++;
+                }
+                i=0;
+                j++;
+            }
+            /*
+            for(y = 990; y<SCREEN_SIZE+990; y+=BLOCK_SIZE){
+                for(x = 20; x<SCREEN_SIZE+20; x+= BLOCK_SIZE){
                     if(screenData[i] == 0){
+                        //batch.draw(blocks, x,y,BLOCK_SIZE,BLOCK_SIZE);
+                    }
+                    if((screenData[i] & 1)!= 0){
                         batch.draw(blocks, x,y,BLOCK_SIZE,BLOCK_SIZE);
                     }
                     if((screenData[i] & 16) !=0){
@@ -365,11 +421,7 @@ public class Study {
                     }
                     i++;
                 }
-            }
-            //check if won
-            if(study == 5){
-                dead = true;
-            }
+            }*/
 
             batch.end();
             stage.act(Gdx.graphics.getDeltaTime());
