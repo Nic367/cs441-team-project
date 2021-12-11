@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
@@ -26,8 +27,9 @@ public class Study {
     private Dimension d;
     //boolean in_game = true;
     boolean dead;
-    final int BLOCK_SIZE = 24;
-    final int NUM_BLOCKS = 10;//15
+    final int BLOCK_SIZE = 200;//24;
+    final int NUM_BLOCKS = 7;
+    final int SCREEN_SIZE = NUM_BLOCKS * BLOCK_SIZE;//LR 7 x 7
     final int MAX_GHOSTS = 12;
     final int PLAYER_SPEED = 6;
     int num_ghosts = 6;
@@ -37,6 +39,7 @@ public class Study {
     Texture player_up, player_down, player_left, player_right;                  //player
     Texture netflix, hulu, game_controller, alcohol;                            //distractions
     Texture book, pencil, book2, pencil2, book3;                                //studying
+    Texture blocks;
     private int player_x, player_y, player_dx, player_dy;
     private int req_dx, req_dy;
     final int valid_speeds[] = {1, 2, 3, 4, 6, 8};
@@ -45,16 +48,13 @@ public class Study {
     private short [] screenData;
     private Timer timer;
     final short [] level_data = {
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0,
     };//10 x 10 POSITIONS: 0 = BLOCKS; 1 = LEFT; 2 = TOP; 4 = RIGHT; 8 = BOTTOM; 16 = fruit;
 
     //UP Button
@@ -84,6 +84,7 @@ public class Study {
     ImageButton backButton;
 
     public void create(){
+        blocks = new Texture(Gdx.files.internal("badlogic.jpg"));
         //player images
         player_up = new Texture(Gdx.files.internal("study/img09.png"));
         player_down = new Texture(Gdx.files.internal("study/img01.png"));
@@ -256,8 +257,9 @@ public class Study {
             int pos;
             short ch;
             if(player_x%BLOCK_SIZE == 0 && player_y%BLOCK_SIZE == 0){ // find pos of player
-                pos = player_x / BLOCK_SIZE + NUM_BLOCKS * (int) (player_y / BLOCK_SIZE);
-                /*ch = screenData[pos];//====================================================================
+                //pos = pacman_x / BLOCK_SIZE + N_BLOCKS * (int) (pacman_y / BLOCK_SIZE); TODO
+                /*pos = player_x / BLOCK_SIZE + NUM_BLOCKS * (int) (player_y / BLOCK_SIZE);
+                ch = screenData[pos];
 
                 //10 x 10 POSITIONS: 0 = BLOCKS; 1 = LEFT; 2 = TOP; 4 = RIGHT; 8 = BOTTOM;
                 if(req_dx !=0 || req_dy !=0){
@@ -289,6 +291,7 @@ public class Study {
             int count;
             for(int i = 0; i <num_ghosts; i++){
                 if(ghost_x[i] % BLOCK_SIZE == 0 && ghost_y[i] % BLOCK_SIZE == 0){
+                    //pos = ghost_x[i] / BLOCK_SIZE + N_BLOCKS * (int) (ghost_y[i] / BLOCK_SIZE); TODO
                     /*pos2 = ghost_x[i] / BLOCK_SIZE + NUM_BLOCKS * (int) (ghost_y[i] / BLOCK_SIZE);
 
                     count = 0;
@@ -332,7 +335,7 @@ public class Study {
                 ghost_x[i] = ghost_x[i]+(ghost_dx[i]*ghost_speed[i]);
                 ghost_y[i] = ghost_y[i]+(ghost_dy[i]*ghost_speed[i]);
                 //DRAW GHOST
-                //batch.draw(netflix, player_x +1, player_y +1);//DIFF PICS TODO
+                batch.draw(netflix, player_x +1, player_y +1);//DIFF PICS TODO
                 //IF PLAYER TOUCHES DISTRACTIONS
                 if(player_x > (ghost_x[i] -12) && player_x < (ghost_x[i] +12)
                         && player_y > (ghost_y[i] -12) && player_y < (ghost_y[i] +12)){//if pacman
@@ -341,16 +344,32 @@ public class Study {
             }
             //DRAW PACMAN
             if(req_dx == -1){
-                //batch.draw(player_left, player_x +1, player_y +1);
+                batch.draw(player_left, player_x +1, player_y +1);
             }else if(req_dx == 1){
-                //batch.draw(player_right, player_x +1, player_y +1);
+                batch.draw(player_right, player_x +1, player_y +1);
             } else if(req_dx == -1){
-                //batch.draw(player_up, player_x +1, player_y +1);
+                batch.draw(player_up, player_x +1, player_y +1);
             }else{
-                //batch.draw(player_down, player_x +1, player_y +1);
+                batch.draw(player_down, player_x +1, player_y +1);
             }
-            //DRAW MAZE
-            //TODO
+            //DRAW MAZE: TODO
+            int i = 0;
+            int x, y;
+            for(y = 990; y<SCREEN_SIZE+990; y+=BLOCK_SIZE){
+                for(x = 20; x<SCREEN_SIZE+20; x+= BLOCK_SIZE){
+                    if(screenData[i] == 0){
+                        batch.draw(blocks, x,y,BLOCK_SIZE,BLOCK_SIZE);
+                    }
+                    if((screenData[i] & 16) !=0){
+                        batch.draw(book, x,y,BLOCK_SIZE,BLOCK_SIZE);
+                    }
+                    i++;
+                }
+            }
+            //check if won
+            if(study == 5){
+                dead = true;
+            }
 
             batch.end();
             stage.act(Gdx.graphics.getDeltaTime());
