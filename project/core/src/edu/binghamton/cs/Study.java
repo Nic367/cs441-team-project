@@ -160,7 +160,7 @@ public class Study {
             }
         });
         //BackButton
-        backImg = new Texture(Gdx.files.internal("study/backButton.png"));
+        backImg = new Texture(Gdx.files.internal("study/backButton.jpg"));
         backRegion = new TextureRegion(backImg);
         backDrawable = new TextureRegionDrawable(backRegion);
         backButton = new ImageButton(backDrawable);
