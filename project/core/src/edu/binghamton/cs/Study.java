@@ -33,7 +33,7 @@ public class Study {
     int num_ghosts = 6;
     int health, hygiene, sleep, study, health_f, hygiene_f, sleep_f, study_f;   //affected stats
     int [] dx, dy;
-    int [] ghost_x, ghost_y, ghost_dx, ghost_dy, ghost_speed;
+    int [] ghost_x, ghost_y, ghost_dx, ghost_dy, ghost_speed;//POSSIBLY ADD GHOST NAME TO AFFECT STATS TODO
     Texture player_up, player_down, player_left, player_right;                  //player
     Texture netflix, hulu, game_controller, alcohol;                            //distractions
     Texture book, pencil, book2, pencil2, book3;                                //studying
@@ -55,7 +55,7 @@ public class Study {
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    };//10 x 10 POSITIONS: 0 = BLOCKS; 1 = LEFT; 2 = TOP; 4 = RIGHT; 8 = BOTTOM;
+    };//10 x 10 POSITIONS: 0 = BLOCKS; 1 = LEFT; 2 = TOP; 4 = RIGHT; 8 = BOTTOM; 16 = fruit;
 
     //UP Button
     Texture upImg;
@@ -102,14 +102,15 @@ public class Study {
         book3 = new Texture(Gdx.files.internal("study/img08.png"));
 
         //directions
-        upImg = new Texture(Gdx.files.internal("study/upButton.png"));
+        upImg = new Texture(Gdx.files.internal("study/upButton.png"));//155x155
         upRegion = new TextureRegion(upImg);
         upDrawable = new TextureRegionDrawable(upRegion);
         upButton = new ImageButton(upDrawable);
         upButton.setSize(400,400);
-        upButton.setPosition(Gdx.graphics.getWidth()-500,40);
+        upButton.setPosition(Gdx.graphics.getWidth()/2 - 200,298);
         upButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y){
+                System.out.println("UP CLICKED HERE");
                 //req_dx = 0;
                 //req_dy = -1;
                 player_dx = 0;
@@ -121,9 +122,10 @@ public class Study {
         downDrawable = new TextureRegionDrawable(downRegion);
         downButton = new ImageButton(downDrawable);
         downButton.setSize(400,400);
-        downButton.setPosition(0,40);
+        downButton.setPosition(Gdx.graphics.getWidth()/2 - 200,-20);
         downButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y){
+                System.out.println("DOWN CLICKED HERE");
                 //req_dx = 0;
                 //req_dy = 1;
                 player_dx = 0;
@@ -135,9 +137,10 @@ public class Study {
         leftDrawable = new TextureRegionDrawable(leftRegion);
         leftButton = new ImageButton(leftDrawable);
         leftButton.setSize(200,200);
-        leftButton.setPosition(Gdx.graphics.getWidth()-300,500);
+        leftButton.setPosition((Gdx.graphics.getWidth()/2) - 410,227);
         leftButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y){
+                System.out.println("LEFT CLICKED HERE");
                 //req_dx = -1;
                 //req_dy = 0;
                 player_dx = -player_dx;
@@ -149,7 +152,7 @@ public class Study {
         rightDrawable = new TextureRegionDrawable(rightRegion);
         rightButton = new ImageButton(rightDrawable);
         rightButton.setSize(400,400);
-        rightButton.setPosition(0,500);
+        rightButton.setPosition(Gdx.graphics.getWidth()/2 + 113,140);
         rightButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y){
                 System.out.println("RIGHT CLICKED HERE");
@@ -160,7 +163,7 @@ public class Study {
             }
         });
         //BackButton
-        backImg = new Texture(Gdx.files.internal("study/backButton.jpg"));
+        backImg = new Texture(Gdx.files.internal("study/backButton.png"));
         backRegion = new TextureRegion(backImg);
         backDrawable = new TextureRegionDrawable(backRegion);
         backButton = new ImageButton(backDrawable);
@@ -247,24 +250,107 @@ public class Study {
             Gdx.input.setInputProcessor(stage);
             Gdx.gl.glClearColor(1,1,1,1);
             Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT);
+            //CHECK FRUIT STATUS TODO
 
+            //MOVE PACMAN
             int pos;
             short ch;
             if(player_x%BLOCK_SIZE == 0 && player_y%BLOCK_SIZE == 0){ // find pos of player
                 pos = player_x / BLOCK_SIZE + NUM_BLOCKS * (int) (player_y / BLOCK_SIZE);
-                //ch = screenData[pos];//====================================================================
+                /*ch = screenData[pos];//====================================================================
 
                 //10 x 10 POSITIONS: 0 = BLOCKS; 1 = LEFT; 2 = TOP; 4 = RIGHT; 8 = BOTTOM;
                 if(req_dx !=0 || req_dy !=0){
-                    //
+                    if(!((req_dx == -1 && req_dy == 0 && (ch & 1) != 0 )
+                    || (req_dy == 1 && req_dy == 0 && (ch & 4) != 0)
+                    || (req_dx == 0 && req_dy == -1 && (ch & 2) != 0)
+                    || (req_dx == 0 && req_dy == 1 && (ch & 8) != 0))){
+                        player_x = req_dx;
+                        player_y = req_dy;
+                    }
                 }
+
+                if((player_x == -1 && player_y == 0 && (ch & 1) != 0)
+                || (player_x == 1 && player_y == 0 && (ch & 4) != 0)
+                || (player_x == 0 && player_y == -1 && (ch & 2) != 0)
+                || (player_x == 0 && player_y == 1 && (ch & 8) != 0)){//checks for standstill?
+                    player_x = 0;
+                    player_y = 0;
+                }*/
             }
+            player_x = player_x + current_speed * player_x;
+            player_y = player_y + current_speed * player_y;
 
             batch.begin();
             //font.draw(batch, "This is the study minigame", 0, Gdx.graphics.getHeight(),Gdx.graphics.getWidth(),10,true);
 
+            //MOVE GHOSTS
+            int pos2;
+            int count;
+            for(int i = 0; i <num_ghosts; i++){
+                if(ghost_x[i] % BLOCK_SIZE == 0 && ghost_y[i] % BLOCK_SIZE == 0){
+                    /*pos2 = ghost_x[i] / BLOCK_SIZE + NUM_BLOCKS * (int) (ghost_y[i] / BLOCK_SIZE);
+
+                    count = 0;
+                    if((screenData[pos2] & 1) == 0 && ghost_dx[i] != 1){
+                        dx[count] = -1;
+                        dy[count] = 0;
+                        count++;
+                    }
+                    if((screenData[pos2] & 2) == 0 && ghost_dx[i] != 1){
+                        dx[count] = 0;
+                        dy[count] = -1;
+                        count++;
+                    }if((screenData[pos2] & 4) == 0 && ghost_dx[i] != -1){
+                        dx[count] = 1;
+                        dy[count] = 0;
+                        count++;
+                    }if((screenData[pos2] & 1) == 0 && ghost_dx[i] != -1){
+                        dx[count] = 0;
+                        dy[count] = 1;
+                        count++;
+                    }
+
+                    if(count == 0){
+                        if((screenData[pos2] & 15) == 15){
+                            ghost_dx[i] = 0;
+                            ghost_dy[i] = 0;
+                        }else{
+                            ghost_dx[i] = -ghost_dx[i];
+                            ghost_dy[i] = -ghost_dy[i];
+                        }
+                    }else{
+                        count = (int)(Math.random()*count);
+                        if(count>3){
+                            count = 3;
+                        }
+
+                        ghost_dy[i] = dy[count];
+                        ghost_dx[i] = dx[count];
+                    }*/
+                }
+                ghost_x[i] = ghost_x[i]+(ghost_dx[i]*ghost_speed[i]);
+                ghost_y[i] = ghost_y[i]+(ghost_dy[i]*ghost_speed[i]);
+                //DRAW GHOST
+                //batch.draw(netflix, player_x +1, player_y +1);//DIFF PICS TODO
+                //IF PLAYER TOUCHES DISTRACTIONS
+                if(player_x > (ghost_x[i] -12) && player_x < (ghost_x[i] +12)
+                        && player_y > (ghost_y[i] -12) && player_y < (ghost_y[i] +12)){//if pacman
+                    dead = true;
+                }
+            }
+            //DRAW PACMAN
+            if(req_dx == -1){
+                //batch.draw(player_left, player_x +1, player_y +1);
+            }else if(req_dx == 1){
+                //batch.draw(player_right, player_x +1, player_y +1);
+            } else if(req_dx == -1){
+                //batch.draw(player_up, player_x +1, player_y +1);
+            }else{
+                //batch.draw(player_down, player_x +1, player_y +1);
+            }
             //DRAW MAZE
-            //DRAW SCORE
+            //TODO
 
             batch.end();
             stage.act(Gdx.graphics.getDeltaTime());
