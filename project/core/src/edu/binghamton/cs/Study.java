@@ -123,7 +123,7 @@ public class Study {
                 req_dx = 0;
                 req_dy = 1;
                 player_dx = 0;
-                player_dy = 3;
+                player_dy = current_speed;
             }
         });
         downImg = new Texture(Gdx.files.internal("study/downButton.png"));
@@ -138,7 +138,7 @@ public class Study {
                 req_dx = 0;
                 req_dy = -1;
                 player_dx = 0;
-                player_dy = -3;
+                player_dy = -current_speed;
             }
         });
         leftImg = new Texture(Gdx.files.internal("study/leftButton.png"));
@@ -152,7 +152,7 @@ public class Study {
                 System.out.println("LEFT CLICKED HERE");
                 req_dx = -1;
                 req_dy = 0;
-                player_dx = -3;
+                player_dx = -current_speed;
                 player_dy = 0;
             }
         });
@@ -167,7 +167,7 @@ public class Study {
                 System.out.println("RIGHT CLICKED HERE");
                 req_dx = 1;
                 req_dy = 0;
-                player_dx = 3;
+                player_dx = current_speed;
                 player_dy = 0;
             }
         });
@@ -245,16 +245,27 @@ public class Study {
                 dead = true;
             }
             //MOVE PACMAN: SCREEN_SIZE = NUM_BLOCKS * BLOCK_SIZE = 14 * 100
-            if(player_x >= 20+100 && player_x<=1220){//START + BOXES - (2*BOXSIZE) = 20+1300-100 = 1220
+            int temp_x = player_x + player_dx;
+            int temp_y = player_y + player_dy;
+            if(temp_x >= 20+100 && temp_x<=1220){//START + BOXES - (2*BOXSIZE) = 20+1300-100 = 1220
                 player_x +=player_dx;
             }else{
                 player_dx = 0;
             }
-            if(player_y >= 990+100 && player_y<=990+100+1300-100){
+            if(temp_y >= 990+100 && temp_y<=990+100+1300-100){
                 player_y +=player_dy;
             }else{
                 player_dy = 0;
             }
+
+/*          DOWN: TODO FIX BORDER PROB && GET PRIZES && BAD GUY
+            req_dx = 0;
+            req_dy = -1;
+            player_dx = 0;
+            player_dy = -3;*/
+
+
+
 
             int pos_x;
             int pos_y;
