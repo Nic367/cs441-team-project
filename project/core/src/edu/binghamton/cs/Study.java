@@ -27,8 +27,8 @@ public class Study {
     private Dimension d;
     //boolean in_game = true;
     boolean dead;
-    final int BLOCK_SIZE = 200;//24;
-    final int NUM_BLOCKS = 7;
+    final int BLOCK_SIZE = 100;//24;
+    final int NUM_BLOCKS = 14;
     final int SCREEN_SIZE = NUM_BLOCKS * BLOCK_SIZE;//1400
     final int MAX_GHOSTS = 12;
     final int PLAYER_SPEED = 6;
@@ -57,15 +57,22 @@ public class Study {
             1, 0, 0, 0, 0, 0, 1,
     };//10 x 10 POSITIONS: 0 = BLOCKS; 1 = LEFT; 2 = TOP; 4 = RIGHT; 8 = BOTTOM; 16 = fruit;
 
-    final int [][] screenData2 = new int[7][7];
+    final int [][] screenData2 = new int[NUM_BLOCKS][NUM_BLOCKS];
     final int [][] level_data2 ={//rotated 90 degrees clockwise
-            {1, 1, 1, 1, 1, 1, 1},
-            {1, 16, 0, 0, 16, 0, 0},
-            {1, 0, 0, 0, 0, 0, 0},
-            {1, 0, 0, 0, 0, 16, 0},
-            {1, 0, 16, 0, 0, 0, 0},
-            {1, 0, 0, 0, 0, 16, 0},
-            {1, 1, 1, 1, 1, 1, 1}
+            {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+            {1, 0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {1, 0, 0, 0, 0, 0, 0, 16, 0, 0, 0, 0, 0, 0},
+            {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {1, 0, 0, 0, 0, 16, 0,0, 0,  0, 0, 0, 0, 0},
+            {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {1, 0, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 0, 0},
+            {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 0, 0},
+            {1, 0, 16, 0, 0, 0, 0,0, 0,  0, 0, 0, 0, 0},
+            {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
     };
 
 
@@ -210,11 +217,11 @@ public class Study {
 
 
 
-        for(int i = 0; i<NUM_BLOCKS*NUM_BLOCKS; i++){
+        /*for(int i = 0; i<NUM_BLOCKS*NUM_BLOCKS; i++){
             screenData[i]=level_data[i];
-        }
-        for(int i = 0; i<7; i++){
-            for(int j = 0; j<7; j++){
+        }*/
+        for(int i = 0; i<NUM_BLOCKS; i++){
+            for(int j = 0; j<NUM_BLOCKS; j++){
                 screenData2[i][j]=level_data2[i][j];
             }
         }
@@ -290,7 +297,7 @@ public class Study {
             if(player_x%BLOCK_SIZE == 0 && player_y%BLOCK_SIZE == 0){ // find pos of player
                 //      (7*200)/200 + 7 * (11*200)/200 = 84
                 pos = (player_x) / BLOCK_SIZE + NUM_BLOCKS * (int) ((player_y) / BLOCK_SIZE);
-                System.out.println(pos);
+                //System.out.println(pos);
 
                 /*ch = screenData[pos];
 
@@ -376,7 +383,7 @@ public class Study {
                 }
             }
             //DRAW PACMAN
-            if(req_dx == -1){
+            /*if(req_dx == -1){
                 batch.draw(player_left, player_x +1, player_y +1, BLOCK_SIZE,BLOCK_SIZE);
             }else if(req_dx == 1){
                 batch.draw(player_right, player_x +1, player_y +1, BLOCK_SIZE,BLOCK_SIZE);
@@ -384,16 +391,16 @@ public class Study {
                 batch.draw(player_up, player_x +1, player_y +1, BLOCK_SIZE,BLOCK_SIZE);
             }else{
                 batch.draw(player_down, player_x +1, player_y +1, BLOCK_SIZE,BLOCK_SIZE);
-            }
+            }*/
             //DRAW MAZE:
             int i = 0;
             int j = 0;
             int x, y;
             for(y = 990; y<SCREEN_SIZE+990; y+=BLOCK_SIZE){
                 for(x = 20; x<SCREEN_SIZE+20; x+= BLOCK_SIZE){
-                    if(i <7 && j <7){
-                        if(screenData2[i][j] == 0){
-                            //batch.draw(blocks, x,y,BLOCK_SIZE,BLOCK_SIZE);
+                    if(i <NUM_BLOCKS && j <NUM_BLOCKS){
+                        if(screenData2[i][j] == 8){
+                            batch.draw(player_up, x,y,BLOCK_SIZE,BLOCK_SIZE);
                         }
                         if((screenData2[i][j] & 1)!= 0){
                             batch.draw(blocks, x,y,BLOCK_SIZE,BLOCK_SIZE);
