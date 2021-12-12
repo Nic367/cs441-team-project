@@ -40,34 +40,23 @@ public class Study {
     Texture netflix, hulu, game_controller, alcohol;                            //distractions
     Texture book, pencil, book2, pencil2, book3;                                //studying
     Texture blocks;
-    private int player_x, player_y, player_dx, player_dy;
-    private int req_dx, req_dy;
+    private int player_x, player_y, player_dx, player_dy;                       //for actual movement
+    private int req_dx, req_dy;                                                 //for image direction
     final int valid_speeds[] = {1, 2, 3, 4, 6, 8};
     final int max_speed = 6;
-    int current_speed = 3;
-    private short [] screenData;
+    int current_speed = 2;
     private Timer timer;
-    final short [] level_data = { //flipped upside down!!
-            1, 1, 1, 1, 1, 1, 1,
-            1, 0, 0, 0, 0, 16, 1,
-            1, 0, 16, 0, 0, 0, 1,
-            1, 0, 0, 0, 0, 16, 1,
-            1, 0, 0, 0, 0, 0, 1,
-            1, 16, 0, 0, 16, 0, 1,
-            1, 0, 0, 0, 0, 0, 1,
-    };//10 x 10 POSITIONS: 0 = BLOCKS; 1 = LEFT; 2 = TOP; 4 = RIGHT; 8 = BOTTOM; 16 = fruit;
-
     final int [][] screenData2 = new int[NUM_BLOCKS][NUM_BLOCKS];
     final int [][] level_data2 ={//rotated 90 degrees clockwise
             {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-            {1, 0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {1, 0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2},
             {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
             {1, 0, 0, 0, 0, 0, 0, 16, 0, 0, 0, 0, 0, 0},
             {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
             {1, 0, 0, 0, 0, 16, 0,0, 0,  0, 0, 0, 0, 0},
             {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
             {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-            {1, 0, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 0, 0},
+            {1, 0, 0, 0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0},
             {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
             {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 0, 0},
             {1, 0, 16, 0, 0, 0, 0,0, 0,  0, 0, 0, 0, 0},
@@ -102,9 +91,6 @@ public class Study {
     TextureRegionDrawable backDrawable;
     ImageButton backButton;
 
-    public Study() {
-    }
-
     public void create(){
         blocks = new Texture(Gdx.files.internal("badlogic.jpg"));
         //player images
@@ -134,10 +120,10 @@ public class Study {
         upButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y){
                 System.out.println("UP CLICKED HERE");
-                //req_dx = 0;
-                //req_dy = -1;
+                req_dx = 0;
+                req_dy = 1;
                 player_dx = 0;
-                player_dy = player_dy;
+                player_dy = 3;
             }
         });
         downImg = new Texture(Gdx.files.internal("study/downButton.png"));
@@ -149,10 +135,10 @@ public class Study {
         downButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y){
                 System.out.println("DOWN CLICKED HERE");
-                //req_dx = 0;
-                //req_dy = 1;
+                req_dx = 0;
+                req_dy = -1;
                 player_dx = 0;
-                player_dy = -player_dy;
+                player_dy = -3;
             }
         });
         leftImg = new Texture(Gdx.files.internal("study/leftButton.png"));
@@ -164,9 +150,9 @@ public class Study {
         leftButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y){
                 System.out.println("LEFT CLICKED HERE");
-                //req_dx = -1;
-                //req_dy = 0;
-                player_dx = -player_dx;
+                req_dx = -1;
+                req_dy = 0;
+                player_dx = -3;
                 player_dy = 0;
             }
         });
@@ -179,9 +165,9 @@ public class Study {
         rightButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y){
                 System.out.println("RIGHT CLICKED HERE");
-                //req_dx = 1;
-                //req_dy = 0;
-                player_dx = player_dx;
+                req_dx = 1;
+                req_dy = 0;
+                player_dx = 3;
                 player_dy = 0;
             }
         });
@@ -199,51 +185,19 @@ public class Study {
             }
         });
 
-        screenData = new short[NUM_BLOCKS*NUM_BLOCKS];
-        dx= new int [4];
-        dy= new int [4];
-        ghost_x = new int [MAX_GHOSTS];
-        ghost_y = new int [MAX_GHOSTS];
-        ghost_dx = new int[MAX_GHOSTS];
-        ghost_dy = new int [MAX_GHOSTS];
-        health = 0;//5 max
-        hygiene = 0;
-        sleep = 0;
-        study = 0;
-
-        ghost_speed = new int[num_ghosts];//added by me
-
-
-
-
-
-        /*for(int i = 0; i<NUM_BLOCKS*NUM_BLOCKS; i++){
-            screenData[i]=level_data[i];
-        }*/
         for(int i = 0; i<NUM_BLOCKS; i++){
             for(int j = 0; j<NUM_BLOCKS; j++){
                 screenData2[i][j]=level_data2[i][j];
             }
         }
+        health = 0;//5 max
+        hygiene = 0;
+        sleep = 0;
+        study = 0;
 
-
-
-        int temp_dx = 1;
-        int random;
-        for(int i = 0; i<num_ghosts; i++){
-            ghost_x[i] = 4*BLOCK_SIZE;
-            ghost_y[i] = 4*BLOCK_SIZE;
-            ghost_dx[i] = temp_dx;
-            ghost_dy[i] = 0;
-            temp_dx = -temp_dx;
-            random = (int) (Math.random()*(current_speed +1));
-            if(random > current_speed){
-                random = current_speed;
-            }
-            ghost_speed[i] = valid_speeds[random];
-        }
-        player_x = 7*BLOCK_SIZE;
-        player_y = 11*BLOCK_SIZE;
+        //START POS: 8x8
+        player_x = 820;
+        player_y = 1490;
         player_dx = 0;
         player_dy = 0;
         dead = false;
@@ -290,7 +244,160 @@ public class Study {
             if(study == 5){
                 dead = true;
             }
-            //MOVE PACMAN
+            //MOVE PACMAN: SCREEN_SIZE = NUM_BLOCKS * BLOCK_SIZE = 14 * 100
+            if(player_x >= 20+100 && player_x<=1220){//START + BOXES - (2*BOXSIZE) = 20+1300-100 = 1220
+                player_x +=player_dx;
+            }else{
+                player_dx = 0;
+            }
+            if(player_y >= 990+100 && player_y<=990+100+1300-100){
+                player_y +=player_dy;
+            }else{
+                player_dy = 0;
+            }
+
+            int pos_x;
+            int pos_y;
+            /*if(player_x%BLOCK_SIZE == 0 && player_y%BLOCK_SIZE == 0){
+                pos_x;
+                pos_y;
+            }
+
+
+
+
+
+            if(player_x%BLOCK_SIZE == 0 && player_y%BLOCK_SIZE == 0){ // find pos of player
+                //      (7*200)/200 + 7 * (11*200)/200 = 84
+                pos = (player_x) / BLOCK_SIZE + NUM_BLOCKS * (int) ((player_y) / BLOCK_SIZE);
+                //System.out.println(pos);
+
+                ch = screenData[pos];
+
+                //10 x 10 POSITIONS: 0 = BLOCKS; 1 = LEFT; 2 = TOP; 4 = RIGHT; 8 = BOTTOM;
+                if(req_dx !=0 || req_dy !=0){
+                    if(!((req_dx == -1 && req_dy == 0 && (ch & 1) != 0 )
+                    || (req_dy == 1 && req_dy == 0 && (ch & 4) != 0)
+                    || (req_dx == 0 && req_dy == -1 && (ch & 2) != 0)
+                    || (req_dx == 0 && req_dy == 1 && (ch & 8) != 0))){
+                        player_x = req_dx;
+                        player_y = req_dy;
+                    }
+                }
+
+                if((player_x == -1 && player_y == 0 && (ch & 1) != 0)
+                || (player_x == 1 && player_y == 0 && (ch & 4) != 0)
+                || (player_x == 0 && player_y == -1 && (ch & 2) != 0)
+                || (player_x == 0 && player_y == 1 && (ch & 8) != 0)){//checks for standstill?
+                    player_x = 0;
+                    player_y = 0;
+                }
+            }
+            player_x = player_x + current_speed * player_x;
+            player_y = player_y + current_speed * player_y;
+            */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            batch.begin();
+            //MOVE GHOSTS: TODO
+
+            //DRAW PACMAN
+            if(req_dx == -1){
+                batch.draw(player_left, player_x,player_y,BLOCK_SIZE,BLOCK_SIZE);
+            }else if(req_dx == 1){
+                batch.draw(player_right, player_x,player_y, BLOCK_SIZE,BLOCK_SIZE);
+            } else if(req_dy == 1){
+                batch.draw(player_up, player_x,player_y,BLOCK_SIZE,BLOCK_SIZE);
+            }else{
+                batch.draw(player_down, player_x,player_y,BLOCK_SIZE,BLOCK_SIZE);
+            }
+            //DRAW MAZE:
+            int i = 0;
+            int j = 0;
+            int x, y;
+            for(y = 990; y<SCREEN_SIZE+990; y+=BLOCK_SIZE){
+                for(x = 20; x<SCREEN_SIZE+20; x+= BLOCK_SIZE){
+                    if(i <NUM_BLOCKS && j <NUM_BLOCKS){
+                        if((screenData2[i][j] & 1)!= 0){
+                            batch.draw(blocks, x,y,BLOCK_SIZE,BLOCK_SIZE);
+                        }
+                        if((screenData2[i][j] & 2)!= 0){
+                            batch.draw(netflix, x,y,BLOCK_SIZE,BLOCK_SIZE);
+                        }/*
+                        if(screenData2[i][j] == 8){
+                            //System.out.println(x+" "+y);
+                            if(req_dx == -1){
+                                batch.draw(player_left, x,y,BLOCK_SIZE,BLOCK_SIZE);
+                            }else if(req_dx == 1){
+                                batch.draw(player_right, x,y,BLOCK_SIZE,BLOCK_SIZE);
+                            } else if(req_dy == 1){
+                                batch.draw(player_up, x,y,BLOCK_SIZE,BLOCK_SIZE);
+                            }else{
+                                batch.draw(player_down, x,y,BLOCK_SIZE,BLOCK_SIZE);
+                            }
+                        }*/
+                        if((screenData2[i][j] & 16) !=0){
+                            batch.draw(book, x,y,BLOCK_SIZE,BLOCK_SIZE);
+                        }
+                    }
+                    i++;
+                }
+                i=0;
+                j++;
+            }
+
+            batch.end();
+            stage.act(Gdx.graphics.getDeltaTime());
+            stage.draw();
+        }
+    }
+}
+/*IN CREATE
+        //screenData = new short[NUM_BLOCKS*NUM_BLOCKS];
+        dx= new int [4];
+        dy= new int [4];
+        ghost_x = new int [MAX_GHOSTS];
+        ghost_y = new int [MAX_GHOSTS];
+        ghost_dx = new int[MAX_GHOSTS];
+        ghost_dy = new int [MAX_GHOSTS];
+        ghost_speed = new int[num_ghosts];//added by me
+
+        for(int i = 0; i<NUM_BLOCKS*NUM_BLOCKS; i++){
+            screenData[i]=level_data[i];
+        }
+        int temp_dx = 1;
+        int random;
+        for(int i = 0; i<num_ghosts; i++){
+            ghost_x[i] = 4*BLOCK_SIZE;
+            ghost_y[i] = 4*BLOCK_SIZE;
+            ghost_dx[i] = temp_dx;
+            ghost_dy[i] = 0;
+            temp_dx = -temp_dx;
+            random = (int) (Math.random()*(current_speed +1));
+            if(random > current_speed){
+                random = current_speed;
+            }
+            ghost_speed[i] = valid_speeds[random];
+        }
+*/
+//MOVE PACMAN
+            /*
             int pos;
             short ch;
             //player_x=7*BLOCK_SIZE(=200); player_y = 11*BLOCK_SIZE;
@@ -318,21 +425,19 @@ public class Study {
                 || (player_x == 0 && player_y == 1 && (ch & 8) != 0)){//checks for standstill?
                     player_x = 0;
                     player_y = 0;
-                }*/
+                }
             }
             player_x = player_x + current_speed * player_x;
             player_y = player_y + current_speed * player_y;
-
-            batch.begin();
-            //font.draw(batch, "This is the study minigame", 0, Gdx.graphics.getHeight(),Gdx.graphics.getWidth(),10,true);
-
-            //MOVE GHOSTS
+*/
+//MOVE GHOSTS
+            /*
             int pos2;
             int count;
             for(int i = 0; i <num_ghosts; i++){
                 if(ghost_x[i] % BLOCK_SIZE == 0 && ghost_y[i] % BLOCK_SIZE == 0){
                     //pos = ghost_x[i] / BLOCK_SIZE + N_BLOCKS * (int) (ghost_y[i] / BLOCK_SIZE); TODO
-                    /*pos2 = ghost_x[i] / BLOCK_SIZE + NUM_BLOCKS * (int) (ghost_y[i] / BLOCK_SIZE);
+                    pos2 = ghost_x[i] / BLOCK_SIZE + NUM_BLOCKS * (int) (ghost_y[i] / BLOCK_SIZE);
 
                     count = 0;
                     if((screenData[pos2] & 1) == 0 && ghost_dx[i] != 1){
@@ -370,7 +475,7 @@ public class Study {
 
                         ghost_dy[i] = dy[count];
                         ghost_dx[i] = dx[count];
-                    }*/
+                    }
                 }
                 ghost_x[i] = ghost_x[i]+(ghost_dx[i]*ghost_speed[i]);
                 ghost_y[i] = ghost_y[i]+(ghost_dy[i]*ghost_speed[i]);
@@ -381,8 +486,8 @@ public class Study {
                         && player_y > (ghost_y[i] -12) && player_y < (ghost_y[i] +12)){//if pacman
                     dead = true;
                 }
-            }
-            //DRAW PACMAN
+            }*/
+//DRAW PACMAN
             /*if(req_dx == -1){
                 batch.draw(player_left, player_x +1, player_y +1, BLOCK_SIZE,BLOCK_SIZE);
             }else if(req_dx == 1){
@@ -392,47 +497,3 @@ public class Study {
             }else{
                 batch.draw(player_down, player_x +1, player_y +1, BLOCK_SIZE,BLOCK_SIZE);
             }*/
-            //DRAW MAZE:
-            int i = 0;
-            int j = 0;
-            int x, y;
-            for(y = 990; y<SCREEN_SIZE+990; y+=BLOCK_SIZE){
-                for(x = 20; x<SCREEN_SIZE+20; x+= BLOCK_SIZE){
-                    if(i <NUM_BLOCKS && j <NUM_BLOCKS){
-                        if(screenData2[i][j] == 8){
-                            batch.draw(player_up, x,y,BLOCK_SIZE,BLOCK_SIZE);
-                        }
-                        if((screenData2[i][j] & 1)!= 0){
-                            batch.draw(blocks, x,y,BLOCK_SIZE,BLOCK_SIZE);
-                        }
-                        if((screenData2[i][j] & 16) !=0){
-                            batch.draw(book, x,y,BLOCK_SIZE,BLOCK_SIZE);
-                        }
-                    }
-                    i++;
-                }
-                i=0;
-                j++;
-            }
-            /*
-            for(y = 990; y<SCREEN_SIZE+990; y+=BLOCK_SIZE){
-                for(x = 20; x<SCREEN_SIZE+20; x+= BLOCK_SIZE){
-                    if(screenData[i] == 0){
-                        //batch.draw(blocks, x,y,BLOCK_SIZE,BLOCK_SIZE);
-                    }
-                    if((screenData[i] & 1)!= 0){
-                        batch.draw(blocks, x,y,BLOCK_SIZE,BLOCK_SIZE);
-                    }
-                    if((screenData[i] & 16) !=0){
-                        batch.draw(book, x,y,BLOCK_SIZE,BLOCK_SIZE);
-                    }
-                    i++;
-                }
-            }*/
-
-            batch.end();
-            stage.act(Gdx.graphics.getDeltaTime());
-            stage.draw();
-        }
-    }
-}
