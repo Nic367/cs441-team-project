@@ -2,6 +2,7 @@ package edu.binghamton.cs;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -38,6 +39,7 @@ public class TeamProject extends ApplicationAdapter {
 	TextureRegion region;
 	TextureRegionDrawable drawable;
 	ImageButton button;
+	Music track;
 
 	@Override
 	public void create () {
@@ -56,7 +58,7 @@ public class TeamProject extends ApplicationAdapter {
 		}
 		else if(gameState==SLEEP){
 			sleep.render();
-			gameState = sleep.gameState;
+//			gameState = sleep.gameState;
 
 		}
 		else if(gameState==HUNGER){
