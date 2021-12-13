@@ -20,8 +20,8 @@ import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Dorm {
-    String[] states= {"dorm_loop", "sleep_minigame", "food_minigame", "study_minigame", "sport_minigame"};
-    String gameState = states[0];
+    static String[] states= {"dorm_loop", "sleep_minigame", "food_minigame", "study_minigame", "sport_minigame"};
+    String gameState = TeamProject.gameState;
 
     //Needs
     public float timer = 0;
@@ -100,7 +100,7 @@ public class Dorm {
     // Character
     int[][] positions = new int[6][2]; //A list of positions the character can walk to
     int[] mc_pos = new int[]{300,640}; //Where the character is currently standing
-    int new_pos_index = 0;
+    int new_pos_index = 2;
     Animation<TextureRegion> leftWalkAnimation;
     Animation<TextureRegion> rightWalkAnimation;
     TextureRegion currentFrame;
@@ -237,7 +237,9 @@ public class Dorm {
         stage.addActor(sleepButton2);
     }
 
+
     public void render(){
+
         Gdx.input.setInputProcessor(stage);
         Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT);
         stateTime += Gdx.graphics.getDeltaTime();

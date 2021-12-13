@@ -83,6 +83,10 @@ public class Hunger {
     }
 
     public void render(){
+        if(this.gameState!=states[2]){
+            this.gameState = states[2];
+        }
+
         Gdx.input.setInputProcessor(stage);
         Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT);
 

@@ -16,12 +16,12 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 public class TeamProject extends ApplicationAdapter {
 	//Game states
-	final String DORM = "dorm_loop";
-	final String SLEEP = "sleep_minigame";
-	final String HUNGER = "food_minigame";
-	final String STUDY = "study_minigame";
-	final String FITNESS = "sport_minigame";
-	public String gameState = DORM;
+	static final String DORM = "dorm_loop";
+	static final String SLEEP = "sleep_minigame";
+	static final String HUNGER = "food_minigame";
+	static final String STUDY = "study_minigame";
+	static final String FITNESS = "sport_minigame";
+	static public String gameState = DORM;
 	Dorm dorm = new Dorm();
 	Study study = new Study();
 	Sleep sleep = new Sleep();
@@ -57,19 +57,22 @@ public class TeamProject extends ApplicationAdapter {
 		else if(gameState==SLEEP){
 			sleep.render();
 			gameState = sleep.gameState;
+
 		}
 		else if(gameState==HUNGER){
 			hunger.render();
 			gameState = hunger.gameState;
-			System.out.println("were playing this");
+
 		}
 		else if(gameState==STUDY){
 			study.render();
 			gameState = study.gameState;
+
 		}
 		else if(gameState==FITNESS){
 			fitness.render();
 			gameState = fitness.gameState;
+
 		}
 
 	}

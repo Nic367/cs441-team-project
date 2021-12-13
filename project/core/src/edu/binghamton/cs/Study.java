@@ -24,6 +24,7 @@ public class Study {
     SpriteBatch batch;
     BitmapFont font;
 
+
     private Dimension d;
     //boolean in_game = true;
     boolean dead;
