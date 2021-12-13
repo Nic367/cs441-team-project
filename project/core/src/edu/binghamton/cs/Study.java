@@ -48,7 +48,7 @@ public class Study {
     private int req_dx, req_dy;                                                 //for image direction
     final int valid_speeds[] = {1, 2, 3, 4, 6, 8};
     final int max_speed = 6;
-    int current_speed = 6;
+    int current_speed = 5;
     private Timer timer;
     final int [][] screenData2 = new int[NUM_BLOCKS][NUM_BLOCKS];
     final int [][] level_data2 ={//rotated 90 degrees clockwise: ex [1][3] = 16
@@ -258,7 +258,7 @@ public class Study {
             //^^ 0 = 990; 1 = 1990; 2 = 1290;
 
             int ghostpos_x = (ghost_x - 20)/(BLOCK_SIZE);//GETTING PRIZES: 120 x 1290 = block [1][3] = 16
-            int ghostpos_y = (ghost_y - 990)/(BLOCK_SIZE);
+            int ghostpos_y = (ghost_y - 990)/(BLOCK_SIZE);//screenData2[ghostpos_x][ghostpos_y]
 
             System.out.println("BEFORE PLAYER ["+player_x+"="+pos_x+"]["+player_y+"="+pos_y+"] GHOST ["+ghost_x+"="+ghostpos_x+"]["+ghost_y+"="+ghostpos_y+"]");
             //[124=1][2288=12] GHOST [120=1][2290=13]
@@ -268,7 +268,7 @@ public class Study {
                     //0 = NOTHING; 1 = BORDER; 2 = GHOST; 8 = PLAYER; 16 = PRIZE
                     study+=2;
                 }
-                if(screenData2[pos_x][pos_y] == screenData2[ghostpos_x][ghostpos_y]){//CHECK NEXT SPOT FOR GHOST
+                if(screenData2[pos_x][pos_y] == 2){//CHECK NEXT SPOT FOR GHOST
                     hygiene--;
                     System.out.println("X1 == "+hygiene);
                     dead = true;
@@ -278,7 +278,7 @@ public class Study {
                 if(screenData2[pos_x][pos_y] == 16){
                     study+=2;
                 }
-                if(screenData2[pos_x][pos_y] == screenData2[ghostpos_x][ghostpos_y]){
+                if(screenData2[pos_x][pos_y] == 2){
                     hygiene--;
                     System.out.println("X2 == "+hygiene);
                     dead = true;
@@ -291,7 +291,7 @@ public class Study {
                 if(screenData2[pos_x][pos_y] == 16){
                     study+=2;
                 }
-                if(screenData2[pos_x][pos_y] == screenData2[ghostpos_x][ghostpos_y]){//CHECK NEXT SPOT FOR GHOST
+                if(screenData2[pos_x][pos_y] == 2){//CHECK NEXT SPOT FOR GHOST
                     hygiene--;
                     System.out.println("Y1 == "+hygiene);
                     dead = true;
@@ -301,7 +301,7 @@ public class Study {
                 if(screenData2[pos_x][pos_y] == 16){
                     study+=2;
                 }
-                if(screenData2[pos_x][pos_y] == screenData2[ghostpos_x][ghostpos_y]){
+                if(screenData2[pos_x][pos_y] == 2){
                     hygiene--;
                     System.out.println("Y2 == "+hygiene);
                     dead = true;
