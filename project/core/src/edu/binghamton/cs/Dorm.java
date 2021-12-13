@@ -3,6 +3,7 @@ package edu.binghamton.cs;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -95,10 +96,27 @@ public class Dorm {
     TextureRegion hungerRegion;
     TextureRegionDrawable hungerDrawable;
     ImageButton hungerButton;
-    Table hungerTable;
+
+    // Character
+    int[][] positions = new int[6][2]; //A list of positions the character can walk to
+    int[] mc_pos = new int[]{300,640}; //Where the character is currently standing
+    int new_pos_index = 0;
+    Animation<TextureRegion> leftWalkAnimation;
+    Animation<TextureRegion> rightWalkAnimation;
+    TextureRegion currentFrame;
+    SpriteBatch mc_batch;
+    float stateTime;
+    String dir = "left";
 
     public void create(){
         batch = new SpriteBatch();
+        mc_batch = new SpriteBatch();
+        positions[1] = new int[]{1100, 1100};
+        positions[0] = new int[]{200, 1100};
+        positions[2] = new int[]{80, 500};
+        positions[3] = new int[]{1120, 600};
+        positions[4] = new int[]{500, 900};
+        animateWalk();
 
         //Sleep Button
         sleepImg = new Texture(Gdx.files.internal("data/dorm/sleepButton.png"));
@@ -222,10 +240,13 @@ public class Dorm {
     public void render(){
         Gdx.input.setInputProcessor(stage);
         Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT);
+        stateTime += Gdx.graphics.getDeltaTime();
 
+        //Drawing buttons and background
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
 
+        //Drawing and updating status bars
         batch.begin();
         batch.draw(bg,0,0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         int x = 100;
@@ -236,9 +257,48 @@ public class Dorm {
         batch.end();
 
 
+        //Drawing the character to the screen
+        if(dir=="left"){
+            currentFrame = leftWalkAnimation.getKeyFrame(stateTime, true);
+        }else{
+            currentFrame = rightWalkAnimation.getKeyFrame(stateTime, true);
+        }
+        mc_batch.begin();
+        mc_batch.draw(currentFrame, mc_pos[0], mc_pos[1], 286,720);
+        mc_batch.end();
+
+        for(int i=0;i<5;i++){
+            if(mc_pos[0] == positions[i][0] && mc_pos[1] == positions[i][1]){
+                //Do a random idle animation for 5 seconds (display speech bubble)
+                //Then set a new position to walk towards
+                new_pos_index = ThreadLocalRandom.current().nextInt(0,4)%Gdx.graphics.getWidth();
+                if(mc_pos[0] < positions[new_pos_index][0]){ //Current x is less than destination x
+                    dir = "right";
+                }
+                else{ //Current x is greater than destination x
+                    dir = "left";
+                }
+            }
+        }
+
+        if(mc_pos[0] < positions[new_pos_index][0]){ //Current x is less than destination x
+            mc_pos[0]+=2;
+        }
+        else{ //Current x is greater than destination x
+            mc_pos[0]-=2;
+        }
+        if(mc_pos[1] < positions[new_pos_index][1]){ //Current y is less than destination y
+            mc_pos[1]+=2;
+            //System.out.println("Current location: ["+mc_pos[0]+", "+mc_pos[1]+"]");
+        }
+        else{ //Current y is greater than destination y
+            mc_pos[1]-=2;
+        }
+
+
+        // Dropping a random need every 5-10 seconds
         int rand = ThreadLocalRandom.current().nextInt(5,10)%Gdx.graphics.getWidth();
         int needIndex = ThreadLocalRandom.current().nextInt(0,6)%Gdx.graphics.getWidth();
-
         if(timer >= rand){
             timer=0;
             if(needs[needIndex]>0){
@@ -271,5 +331,48 @@ public class Dorm {
         } else if (needs[index] == 0) {
             statusBars.set(index, new Texture(Gdx.files.internal(status0)));
         }
+    }
+
+    public void animateWalk(){
+        Texture walk1 = new Texture(Gdx.files.internal("data/dorm/mc-walk-1.png"));
+        Texture walk2 = new Texture(Gdx.files.internal("data/dorm/mc-walk-2.png"));
+        Texture walk3 = new Texture(Gdx.files.internal("data/dorm/mc-walk-3.png"));
+        Texture walk4 = new Texture(Gdx.files.internal("data/dorm/mc-walk-4.png"));
+        Texture walk5 = new Texture(Gdx.files.internal("data/dorm/mc-walk-5.png"));
+        TextureRegion walkRegion1 = new TextureRegion(walk1);
+        TextureRegion walkRegion2 = new TextureRegion(walk2);
+        TextureRegion walkRegion3 = new TextureRegion(walk3);
+        TextureRegion walkRegion4 = new TextureRegion(walk4);
+        TextureRegion walkRegion5 = new TextureRegion(walk5);
+        TextureRegion[] leftWalkFrames = new TextureRegion[5];
+        leftWalkFrames[0] = walkRegion1;
+        leftWalkFrames[1] = walkRegion2;
+        leftWalkFrames[2] = walkRegion3;
+        leftWalkFrames[3] = walkRegion4;
+        leftWalkFrames[4] = walkRegion5;
+
+
+        Texture rightWalk1 = new Texture(Gdx.files.internal("data/dorm/mc-walk-right-1.png"));
+        Texture rightWalk2 = new Texture(Gdx.files.internal("data/dorm/mc-walk-right-2.png"));
+        Texture rightWalk3 = new Texture(Gdx.files.internal("data/dorm/mc-walk-right-3.png"));
+        Texture rightWalk4 = new Texture(Gdx.files.internal("data/dorm/mc-walk-right-4.png"));
+        Texture rightWalk5 = new Texture(Gdx.files.internal("data/dorm/mc-walk-right-5.png"));
+        TextureRegion walkRightRegion1 = new TextureRegion(rightWalk1);
+        TextureRegion walkRightRegion2 = new TextureRegion(rightWalk2);
+        TextureRegion walkRightRegion3 = new TextureRegion(rightWalk3);
+        TextureRegion walkRightRegion4 = new TextureRegion(rightWalk4);
+        TextureRegion walkRightRegion5 = new TextureRegion(rightWalk5);
+        TextureRegion[] rightWalkFrames = new TextureRegion[5];
+        rightWalkFrames[0] = walkRightRegion1;
+        rightWalkFrames[1] = walkRightRegion2;
+        rightWalkFrames[2] = walkRightRegion3;
+        rightWalkFrames[3] = walkRightRegion4;
+        rightWalkFrames[4] = walkRightRegion5;
+
+
+        this.leftWalkAnimation = new Animation<TextureRegion>((float)0.225, leftWalkFrames);
+        this.rightWalkAnimation = new Animation<TextureRegion>((float)0.225, rightWalkFrames);
+        this.stateTime = (float)0;
+
     }
 }
