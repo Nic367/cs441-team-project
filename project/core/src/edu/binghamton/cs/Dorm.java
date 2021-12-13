@@ -21,7 +21,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class Dorm {
     static String[] states= {"dorm_loop", "sleep_minigame", "food_minigame", "study_minigame", "sport_minigame"};
-    String gameState = TeamProject.gameState;
+//    String gameState = TeamProject.gameState;
 
     //Needs
     public float timer = 0;
@@ -127,7 +127,7 @@ public class Dorm {
         sleepButton.setPosition(Gdx.graphics.getWidth()-1250,Gdx.graphics.getHeight()-1150);
         sleepButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y){
-                gameState = states[1];
+                TeamProject.gameState = "sleep_minigame";
             }
         });
 
@@ -140,7 +140,7 @@ public class Dorm {
         sleepButton2.setPosition(Gdx.graphics.getWidth()-880,Gdx.graphics.getHeight()-920);
         sleepButton2.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y){
-                gameState = states[1];
+                TeamProject.gameState = "sleep_minigame";
             }
         });
 
@@ -153,7 +153,7 @@ public class Dorm {
         studyButton.setPosition(Gdx.graphics.getWidth()-275,Gdx.graphics.getHeight()-890);
         studyButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y){
-                gameState = states[3];
+                TeamProject.gameState = "study_minigame";
             }
         });
 
@@ -166,7 +166,7 @@ public class Dorm {
         fitnessButton.setPosition(Gdx.graphics.getWidth()-1020,Gdx.graphics.getHeight()-310);
         fitnessButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y){
-                gameState = states[4];
+                TeamProject.gameState = "sport_minigame";
             }
         });
 
@@ -179,7 +179,7 @@ public class Dorm {
         hungerButton.setPosition(Gdx.graphics.getWidth()/2-105,Gdx.graphics.getHeight()/2-30);
         hungerButton.addListener(   new ClickListener() {
             public void clicked(InputEvent event, float x, float y){
-                gameState = states[2];
+                TeamProject.gameState = "food_minigame";
             }
         });
 

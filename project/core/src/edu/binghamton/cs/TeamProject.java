@@ -52,7 +52,7 @@ public class TeamProject extends ApplicationAdapter {
 	public void render () {
 		if(gameState==DORM){
 			dorm.render();
-			gameState = dorm.gameState;
+//			gameState = dorm.gameState;
 		}
 		else if(gameState==SLEEP){
 			sleep.render();
@@ -61,17 +61,17 @@ public class TeamProject extends ApplicationAdapter {
 		}
 		else if(gameState==HUNGER){
 			hunger.render();
-			gameState = hunger.gameState;
+//			gameState = hunger.gameState;
 
 		}
 		else if(gameState==STUDY){
 			study.render();
-			gameState = study.gameState;
+//			gameState = study.gameState;
 
 		}
 		else if(gameState==FITNESS){
 			fitness.render();
-			gameState = fitness.gameState;
+//			gameState = fitness.gameState;
 
 		}
 

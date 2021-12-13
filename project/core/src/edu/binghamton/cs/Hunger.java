@@ -22,7 +22,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class Hunger {
     String[] states= {"dorm_loop", "sleep_minigame", "food_minigame", "study_minigame", "sport_minigame"};
-    String gameState;
+//    String gameState;
     int foodCaught = 0;
 
     // Renderables
@@ -55,7 +55,7 @@ public class Hunger {
     TextureRegion region;
 
     public void create(){
-        gameState = states[2];
+//        TeamProject.gameState = states[2];
         //Player
         hitboxC = new ShapeRenderer();
         hitbox = new Rectangle();
@@ -83,15 +83,13 @@ public class Hunger {
     }
 
     public void render(){
-        if(this.gameState!=states[2]){
-            this.gameState = states[2];
-        }
 
         Gdx.input.setInputProcessor(stage);
         Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT);
 
         if(foodCaught==3){
-            this.gameState = states[0];
+            TeamProject.gameState = states[0];
+            foodCaught=0;
         }
 
         /* ====== Text ====== */
