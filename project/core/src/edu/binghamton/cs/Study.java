@@ -19,7 +19,7 @@ import java.awt.Dimension;
 
 public class Study {
     String[] states= {"dorm_loop", "sleep_minigame", "food_minigame", "study_minigame", "sport_minigame"};
-    String gameState = states[3];
+    //String gameState = states[3];
     Stage stage, stage2;
     SpriteBatch batch;
     BitmapFont font;
@@ -184,7 +184,7 @@ public class Study {
         backButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y){
                 System.out.println("BACK CLICKED HERE");
-                gameState = states[0];
+                TeamProject.gameState = states[0];
             }
         });
 
