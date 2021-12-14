@@ -22,7 +22,7 @@ public class Study {
     //String gameState = states[3];
     Stage stage, stage2;
     SpriteBatch batch;
-    BitmapFont font;
+    BitmapFont font, font2;
 
 
     private Dimension d;
@@ -103,7 +103,11 @@ public class Study {
     int min_f = 0;
     int range_f = max_f - min_f + 1;
 
+    Texture bg;
+    TextureRegion region;
+
     public void create(){
+        bg = new Texture(Gdx.files.internal("study/deadbg.png"));
         blocks = new Texture(Gdx.files.internal("badlogic.jpg"));
         //player images
         player_up = new Texture(Gdx.files.internal("study/img09.png"));
@@ -290,7 +294,9 @@ public class Study {
 
         batch = new SpriteBatch();
         font = new BitmapFont();
-        font.getData().setScale(10f);
+        font.getData().setScale(9f);
+        font2 = new BitmapFont();
+        font2.getData().setScale(7f);
 
         //Staging
         stage = new Stage(new ScreenViewport());
@@ -314,7 +320,9 @@ public class Study {
             Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT);
 
             batch.begin();
-            font.draw(batch,"Health, Hygiene, sleep, and study stats are as follows: "+health_f+" "+hygiene_f+" "+sleep_f+" "+study_f,0,Gdx.graphics.getHeight(),Gdx.graphics.getWidth(), 10,true);
+            batch.draw(bg,0,0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+            font.draw(batch,"Health, Hygiene, sleep, and study stats are as follows: "+health_f+" "+hygiene_f+" "+sleep_f+" "+study_f,10,Gdx.graphics.getHeight()-50,Gdx.graphics.getWidth(), 10,true);
+            font2.draw(batch,"TAP SCREEN TO STOP STUDYING",10, 300,Gdx.graphics.getWidth(),5, true);
             batch.end();
 
             stage2.act(Gdx.graphics.getDeltaTime());
