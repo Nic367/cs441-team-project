@@ -33,7 +33,7 @@ public class Study {
     final int SCREEN_SIZE = NUM_BLOCKS * BLOCK_SIZE;//1400
     final int MAX_GHOSTS = 12;
     final int PLAYER_SPEED = 6;
-    int num_ghosts = 6;
+    int num_prizes = 4;
     int health, hygiene, sleep, study, health_f, hygiene_f, sleep_f, study_f;   //affected stats
     int fun_f = 0;
     int hunger_f = 0;                                                           //other stats
@@ -98,6 +98,10 @@ public class Study {
     int min = 0;
     int range = max - min + 1;
     int rand = (int)(Math.random() * range) + min;
+
+    int max_f = 3;
+    int min_f = 0;
+    int range_f = max_f - min_f + 1;
 
     public void create(){
         blocks = new Texture(Gdx.files.internal("badlogic.jpg"));
@@ -189,6 +193,49 @@ public class Study {
         backButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y){
                 System.out.println("BACK CLICKED HERE");
+                for(int i = 0; i<NUM_BLOCKS; i++){
+                    for(int j = 0; j<NUM_BLOCKS; j++){
+                        screenData2[i][j]=level_data2[i][j];
+                    }
+                }
+                health = (int)(Math.random() * range_f) + min_f;
+                hygiene = (int)(Math.random() * range_f) + min_f;
+                sleep = (int)(Math.random() * range_f) + min_f;
+                study = 0;
+                player_x = 820;
+                player_y = 1490;
+                player_dx = 0;
+                player_dy = 0;
+                dead = false;
+                ghost_x = 120;
+                ghost_y = 990 + 1400 - 100;//2290
+                if(rand == 0){//RIGHT
+                    ghost_dx = current_speed;
+                    ghost_dy = 0;
+                }else if(rand == 1){//DOWN
+                    ghost_dx = 0;
+                    ghost_dy = -current_speed;
+                }else if(rand == 2){//LEFT
+                    ghost_dx = -current_speed;
+                    ghost_dy = 0;
+                }else if(rand == 3){//UP
+                    ghost_dx = 0;
+                    ghost_dy = current_speed;
+                }else if(rand == 4){//NE
+                    ghost_dx = current_speed;
+                    ghost_dy = current_speed;
+                }else if(rand == 5){//SW
+                    ghost_dx = -current_speed;
+                    ghost_dy = -current_speed;
+                }else if(rand == 6){//NW
+                    ghost_dx = -current_speed;
+                    ghost_dy = current_speed;
+                }else{//NE
+                    ghost_dx = current_speed;
+                    ghost_dy = -current_speed;
+                }
+                study = 0;
+                num_prizes = 0;
                 TeamProject.gameState = states[0];
             }
         });
@@ -198,10 +245,10 @@ public class Study {
                 screenData2[i][j]=level_data2[i][j];
             }
         }
-        health = 0;//max = 8
-        hygiene = 0;
-        sleep = 0;
-        study = 0;
+        health = (int)(Math.random() * range_f) + min_f;
+        hygiene = (int)(Math.random() * range_f) + min_f;
+        sleep = (int)(Math.random() * range_f) + min_f;
+        study = 0;//max 8
 
         //START POS: 8x8
         player_x = 820;
@@ -258,9 +305,9 @@ public class Study {
     public void render(){
         if(dead){
             Gdx.input.setInputProcessor(stage2);
-            health_f = health;
-            hygiene_f = hygiene;
-            sleep_f = sleep;
+            health_f = -health;
+            hygiene_f = -hygiene;
+            sleep_f = -sleep;
             study_f = study;
 
             Gdx.gl.glClearColor(0,0,0,1);
@@ -277,7 +324,7 @@ public class Study {
             Gdx.gl.glClearColor(1,1,1,1);
             Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT);
             //CHECK FRUIT STATUS
-            if(study == 8){
+            if(study == 8 || num_prizes == 0){
                 dead = true;
             }
             //MOVE PACMAN: SCREEN_SIZE = NUM_BLOCKS * BLOCK_SIZE = 14 * 100
@@ -306,9 +353,13 @@ public class Study {
                     }
                 }
             }
+
             if(ghostposs_x >= 20 && ghostposs_x<=1320){
                 ghost_x +=ghost_dx;
                 if(screenData2[ghostpos_x][ghostpos_y] != 1){//border exception for diagonals (2)
+                    if(screenData2[ghostpos_x][ghostpos_y] == 16){
+                        num_prizes--;
+                    }
                     screenData2[ghostpos_x][ghostpos_y] = 2;
                 }
             }else{
@@ -346,6 +397,9 @@ public class Study {
             if(ghostposs_y >= 990+100 && ghostposs_y<=990+100+1300-100){//COPY ABOVE IF FOR "Y"
                 ghost_y +=ghost_dy;
                 if(screenData2[ghostpos_x][ghostpos_y] != 1){//border exception for diagonals
+                    if(screenData2[ghostpos_x][ghostpos_y] == 16){
+                        num_prizes--;
+                    }
                     screenData2[ghostpos_x][ghostpos_y] = 2;
                 }
             }else{
@@ -387,9 +441,9 @@ public class Study {
                 if(screenData2[pos_x][pos_y] == 16){//CHECK NEXT SPOT FOR PRIZE
                     //0 = NOTHING; 1 = BORDER; 2 = GHOST; 8 = PLAYER; 16 = PRIZE
                     study+=2;
+                    num_prizes--;
                 }
                 if(screenData2[pos_x][pos_y] == 2){//CHECK NEXT SPOT FOR GHOST
-                    hygiene--;
                     //System.out.println("X1 == "+hygiene);
                     dead = true;
                 }
@@ -397,9 +451,9 @@ public class Study {
                 player_x +=player_dx;//UPDATE POS
                 if(screenData2[pos_x][pos_y] == 16){
                     study+=2;
+                    num_prizes--;
                 }
                 if(screenData2[pos_x][pos_y] == 2){
-                    hygiene--;
                     //System.out.println("X2 == "+hygiene);
                     dead = true;
                 }
@@ -407,12 +461,13 @@ public class Study {
             }else{//IF POSS POS OUT OF BOUNDARY STOP PLAYER
                 player_dx = 0;
             }
+            System.out.println("STUDY == "+study);
             if(poss_y >= 990+100 && poss_y<=990+100+1300-100){//COPY ABOVE IF FOR "Y"
                 if(screenData2[pos_x][pos_y] == 16){
                     study+=2;
+                    num_prizes--;
                 }
                 if(screenData2[pos_x][pos_y] == 2){//CHECK NEXT SPOT FOR GHOST
-                    hygiene--;
                     //System.out.println("Y1 == "+hygiene);
                     dead = true;
                 }
@@ -420,9 +475,9 @@ public class Study {
                 player_y +=player_dy;
                 if(screenData2[pos_x][pos_y] == 16){
                     study+=2;
+                    num_prizes--;
                 }
                 if(screenData2[pos_x][pos_y] == 2){
-                    hygiene--;
                     //System.out.println("Y2 == "+hygiene);
                     dead = true;
                 }
