@@ -24,6 +24,8 @@ public class Hunger {
     String[] states= {"dorm_loop", "sleep_minigame", "food_minigame", "study_minigame", "sport_minigame"};
 //    String gameState;
     int foodCaught = 0;
+    int hygiene=0;
+    int hunger=0;
 
     // Renderables
     Stage stage;
@@ -49,13 +51,15 @@ public class Hunger {
     Food food;
     float foodTimer=0;
 
+    // Health
+    Texture head;
+    int hearts = 3;
 
     // Game Background
     Texture bg;
     TextureRegion region;
 
     public void create(){
-//        TeamProject.gameState = states[2];
         //Player
         hitboxC = new ShapeRenderer();
         hitbox = new Rectangle();
@@ -65,16 +69,17 @@ public class Hunger {
         caughtFoodList = new ArrayList<>();
         fallenFoodList = new ArrayList<>();
         food = new Food(foodList);
-//        foodRect = new Rectangle();
-//        food = new ShapeRenderer();
-//        foodList.add(food);
-//        food_x = 500;
-//        food_y = 1000;
+
+        //Health
+        head = new Texture(Gdx.files.internal("data/hunger/head.png"));
 
         //Timer
         timer_text = new BitmapFont();
         timer_text.getData().setScale(5f);
         timer = 0;
+
+        //Background
+        bg = new Texture(Gdx.files.internal("data/dorm/dormBG.png"));
 
         batch = new SpriteBatch();
         font = new BitmapFont();
@@ -86,14 +91,18 @@ public class Hunger {
 
         Gdx.input.setInputProcessor(stage);
         Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT);
+        batch.begin();
+        batch.draw(bg,0,0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight()); //Background
 
-        if(foodCaught==3){
-            TeamProject.gameState = states[0];
-            foodCaught=0;
+        /* ====== Top Health Bar  ====== */
+        int x = 20;
+        for(int i=0;i<hearts;i++){
+            batch.draw(head,x,Gdx.graphics.getHeight()-220,200,200);
+            x+=220;
         }
 
         /* ====== Text ====== */
-        batch.begin();
+
         //font.draw(batch, "This is the food minigame", 0, Gdx.graphics.getHeight(),Gdx.graphics.getWidth(),10,true);
         if(timer/1_000_000_000 <10){
             timer_text.draw(batch,"0:0"+timer/1_000_000_000,Gdx.graphics.getWidth()-200, Gdx.graphics.getHeight(),Gdx.graphics.getWidth(),10,true);
@@ -144,18 +153,20 @@ public class Hunger {
         /* hitbox */
         for(Food food : foodList){
             if(food!=null){
-                if(food.goodOrBad==1 || food.goodOrBad==4){ //The food is one you want to catch
-                    food.visiblebox.begin(ShapeRenderer.ShapeType.Filled);
-                    food.visiblebox.setColor(71/255f,31/255f,0/255f,1);
-                    food.visiblebox.rect(food.x, food.y, 100, 100);
-                    food.rect.set(food.x, food.y, 100, 100);
+                if(food.goodOrBad==2 || food.goodOrBad==3){ //The food is one you want to catch
+                    food.rect.set(food.x, food.y, 200, 200);
                     food.visiblebox.end();
+
+                    food.batch.begin(); //Drawing Book
+                    food.batch.draw(food.texture,food.x,food.y,200,200);
+                    food.batch.end();
                 }
                 else{ // The food is rotten/garbage and you don't want to catch it
-                    food.visiblebox.begin(ShapeRenderer.ShapeType.Filled);
-                    food.visiblebox.setColor(255/255f,0/255f,0/255f,1);
-                    food.visiblebox.rect(food.x, food.y, 100, 100);
-                    food.rect.set(food.x, food.y, 100, 100);
+                    food.rect.set(food.x, food.y, 200, 200);
+                    food.batch.begin(); //Drawing Book
+                    food.batch.draw(food.texture,food.x,food.y,200,200);
+                    food.batch.end();
+
                     //Hygeine down
                     food.visiblebox.end();
                 }
@@ -184,6 +195,19 @@ public class Hunger {
             food.visiblebox = null;
             food.rect = null;
             foodList.remove(food);
+            if(food.goodOrBad==4 || food.goodOrBad==1){
+                hearts--;
+                if(Dorm.needs[2]>0){
+                    Dorm.needs[2]--; //hygiene down
+                    Dorm.updateStatusBars(2);
+                }
+            }
+            else{
+                if(Dorm.needs[4]<8){
+                    Dorm.needs[4]--;
+                    Dorm.updateStatusBars(4);
+                }
+            }
             //Stack Sandwich
         }
 
@@ -192,19 +216,46 @@ public class Hunger {
 
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
+
+        if(hearts==0){
+            TeamProject.gameState = states[0];
+            foodCaught=0;
+            hearts=3;
+        }
     }
 
     static class Food{
         ShapeRenderer visiblebox = new ShapeRenderer();
         Rectangle rect = new Rectangle();
+        SpriteBatch batch = new SpriteBatch();
+        Texture texture;
+        String core = "data/hunger/appleCore.png"; //0
+        String peel = "data/hunger/bananaPeel.png"; //1
+        String bread = "data/hunger/bread.png"; //0
+        String cheese = "data/hunger/cheese.png"; //1
+        String lettuce = "data/hunger/lettuce.png"; //2
+        String meat = "data/hunger/meat.png"; //3
+        String tomato = "data/hunger/tomato.png"; //4
+        String[] goodImages = {bread, cheese, lettuce, meat, tomato};
+        String[] badImages = {core, peel};
         int x;
         int y = 1920;
         int goodOrBad; // 1,2,3 means good  //4 means bad
+        int type;
 
         Food(ArrayList<Food> foodList){
             foodList.add(this);
             x=ThreadLocalRandom.current().nextInt(0,99999)%Gdx.graphics.getWidth();
-            goodOrBad=ThreadLocalRandom.current().nextInt(0,4);
+            goodOrBad=ThreadLocalRandom.current().nextInt(1,4);
+
+            if(goodOrBad==2 || goodOrBad==3){ //
+                type = ThreadLocalRandom.current().nextInt(0,99999)%5;
+                texture = new Texture(Gdx.files.internal(goodImages[type]));
+            }
+            else{
+                type = ThreadLocalRandom.current().nextInt(0,99999)%2;
+                texture = new Texture(Gdx.files.internal(badImages[type]));
+            }
         }
     }
 }

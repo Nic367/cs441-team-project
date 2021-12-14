@@ -25,25 +25,25 @@ public class Dorm {
 
     //Needs
     public float timer = 0;
-    int[] needs = {7, 7, 7, 7, 7, 7}; //Sleep=0, Study=1, bathroom=2, fun=3, hunger=4, fitness=5
+    static public int[] needs = {7, 7, 7, 7, 7, 7}; //Sleep=0, Study=1, hygiene=2, fun=3, hunger=4, fitness=5
 
     //Status Bars (8 levels. 0=Empty. 8=Full)
-    ArrayList<Texture> statusBars = new ArrayList<>();
+    static ArrayList<Texture> statusBars = new ArrayList<>();
     Texture sleepStatus;
     Texture studyStatus;
     Texture bathroomStatus;
     Texture happinessStatus;
     Texture hungerStatus;
     Texture fitnessStatus;
-    String status0 = "data/dorm/status0.png";
-    String status1 = "data/dorm/status1.png";
-    String status2 = "data/dorm/status2.png";
-    String status3 = "data/dorm/status3.png";
-    String status4 = "data/dorm/status4.png";
-    String status5 = "data/dorm/status5.png";
-    String status6 = "data/dorm/status6.png";
-    String status7 = "data/dorm/status7.png";
-    String status8 = "data/dorm/status8.png";
+    static String status0 = "data/dorm/status0.png";
+    static String status1 = "data/dorm/status1.png";
+    static String status2 = "data/dorm/status2.png";
+    static String status3 = "data/dorm/status3.png";
+    static String status4 = "data/dorm/status4.png";
+    static String status5 = "data/dorm/status5.png";
+    static String status6 = "data/dorm/status6.png";
+    static String status7 = "data/dorm/status7.png";
+    static String status8 = "data/dorm/status8.png";
 
 
     //Renderables
@@ -313,7 +313,7 @@ public class Dorm {
         }
     }
 
-    public void updateStatusBars(int index) {
+    public static void updateStatusBars(int index) {
         if (needs[index] == 8) {
             statusBars.set(index, new Texture(Gdx.files.internal(status8)));
         } else if (needs[index] == 7) {
