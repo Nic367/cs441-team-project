@@ -33,7 +33,7 @@ public class Study {
     final int SCREEN_SIZE = NUM_BLOCKS * BLOCK_SIZE;//1400
     final int MAX_GHOSTS = 12;
     final int PLAYER_SPEED = 6;
-    int num_ghosts = 6;
+    int num_prizes = 4;
     int health, hygiene, sleep, study, health_f, hygiene_f, sleep_f, study_f;   //affected stats
     int fun_f = 0;
     int hunger_f = 0;                                                           //other stats
@@ -43,14 +43,14 @@ public class Study {
     Texture netflix, hulu, game_controller, alcohol;                            //distractions
     Texture book, pencil, book2, pencil2, book3;                                //studying
     Texture blocks;
-    private int ghost_x, ghost_y;
+    private int ghost_x, ghost_y, ghost_dx, ghost_dy;
     private int player_x, player_y, player_dx, player_dy;                       //for actual movement
     private int req_dx, req_dy;                                                 //for image direction
     final int valid_speeds[] = {1, 2, 3, 4, 6, 8};
     final int max_speed = 6;
     int current_speed = 5;
     private Timer timer;
-    final int [][] screenData2 = new int[NUM_BLOCKS][NUM_BLOCKS];
+    int [][] screenData2 = new int[NUM_BLOCKS][NUM_BLOCKS];
     final int [][] level_data2 ={//rotated 90 degrees clockwise: ex [1][3] = 16
             {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
             {1, 0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2},
@@ -93,6 +93,15 @@ public class Study {
     TextureRegion backRegion;
     TextureRegionDrawable backDrawable;
     ImageButton backButton;
+
+    int max = 7;
+    int min = 0;
+    int range = max - min + 1;
+    int rand = (int)(Math.random() * range) + min;
+
+    int max_f = 3;
+    int min_f = 0;
+    int range_f = max_f - min_f + 1;
 
     public void create(){
         blocks = new Texture(Gdx.files.internal("badlogic.jpg"));
@@ -184,6 +193,49 @@ public class Study {
         backButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y){
                 System.out.println("BACK CLICKED HERE");
+                for(int i = 0; i<NUM_BLOCKS; i++){
+                    for(int j = 0; j<NUM_BLOCKS; j++){
+                        screenData2[i][j]=level_data2[i][j];
+                    }
+                }
+                health = (int)(Math.random() * range_f) + min_f;
+                hygiene = (int)(Math.random() * range_f) + min_f;
+                sleep = (int)(Math.random() * range_f) + min_f;
+                study = 0;
+                player_x = 820;
+                player_y = 1490;
+                player_dx = 0;
+                player_dy = 0;
+                dead = false;
+                ghost_x = 120;
+                ghost_y = 990 + 1400 - 100;//2290
+                if(rand == 0){//RIGHT
+                    ghost_dx = current_speed;
+                    ghost_dy = 0;
+                }else if(rand == 1){//DOWN
+                    ghost_dx = 0;
+                    ghost_dy = -current_speed;
+                }else if(rand == 2){//LEFT
+                    ghost_dx = -current_speed;
+                    ghost_dy = 0;
+                }else if(rand == 3){//UP
+                    ghost_dx = 0;
+                    ghost_dy = current_speed;
+                }else if(rand == 4){//NE
+                    ghost_dx = current_speed;
+                    ghost_dy = current_speed;
+                }else if(rand == 5){//SW
+                    ghost_dx = -current_speed;
+                    ghost_dy = -current_speed;
+                }else if(rand == 6){//NW
+                    ghost_dx = -current_speed;
+                    ghost_dy = current_speed;
+                }else{//NE
+                    ghost_dx = current_speed;
+                    ghost_dy = -current_speed;
+                }
+                study = 0;
+                num_prizes = 0;
                 TeamProject.gameState = states[0];
             }
         });
@@ -193,10 +245,10 @@ public class Study {
                 screenData2[i][j]=level_data2[i][j];
             }
         }
-        health = 0;//max = 8
-        hygiene = 0;
-        sleep = 0;
-        study = 0;
+        health = (int)(Math.random() * range_f) + min_f;
+        hygiene = (int)(Math.random() * range_f) + min_f;
+        sleep = (int)(Math.random() * range_f) + min_f;
+        study = 0;//max 8
 
         //START POS: 8x8
         player_x = 820;
@@ -206,6 +258,32 @@ public class Study {
         dead = false;
         ghost_x = 120;
         ghost_y = 990 + 1400 - 100;//2290
+
+        if(rand == 0){//RIGHT
+            ghost_dx = current_speed;
+            ghost_dy = 0;
+        }else if(rand == 1){//DOWN
+            ghost_dx = 0;
+            ghost_dy = -current_speed;
+        }else if(rand == 2){//LEFT
+            ghost_dx = -current_speed;
+            ghost_dy = 0;
+        }else if(rand == 3){//UP
+            ghost_dx = 0;
+            ghost_dy = current_speed;
+        }else if(rand == 4){//NE
+            ghost_dx = current_speed;
+            ghost_dy = current_speed;
+        }else if(rand == 5){//SW
+            ghost_dx = -current_speed;
+            ghost_dy = -current_speed;
+        }else if(rand == 6){//NW
+            ghost_dx = -current_speed;
+            ghost_dy = current_speed;
+        }else{//NE
+            ghost_dx = current_speed;
+            ghost_dy = -current_speed;
+        }
 
         timer = new Timer();    //milliseconds for redrawing - for animation
         timer.start();
@@ -227,9 +305,9 @@ public class Study {
     public void render(){
         if(dead){
             Gdx.input.setInputProcessor(stage2);
-            health_f = health;
-            hygiene_f = hygiene;
-            sleep_f = sleep;
+            health_f = -health;
+            hygiene_f = -hygiene;
+            sleep_f = -sleep;
             study_f = study;
 
             Gdx.gl.glClearColor(0,0,0,1);
@@ -246,64 +324,161 @@ public class Study {
             Gdx.gl.glClearColor(1,1,1,1);
             Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT);
             //CHECK FRUIT STATUS
-            if(study == 8){
+            if(study == 8 || num_prizes == 0){
                 dead = true;
             }
             //MOVE PACMAN: SCREEN_SIZE = NUM_BLOCKS * BLOCK_SIZE = 14 * 100
-            int poss_x = player_x + player_dx;//POSSIBLE POSITIONS PLAYER
+            int poss_x = player_x + player_dx;//POSSIBLE POSITIONS
             int poss_y = player_y + player_dy;
+            int ghostposs_x = ghost_x + ghost_dx;
+            int ghostposs_y = ghost_y + ghost_dy;
+
             int pos_x = (player_x - 20)/(BLOCK_SIZE);//ACTUAL POSITIONS PLAYER
             //^^ 0 = 20; 1 = 120; 2 = 220;
             int pos_y = (player_y - 990)/(BLOCK_SIZE);
             //^^ 0 = 990; 1 = 1990; 2 = 1290;
+            int ghostpos_x = (ghost_x - 20)/(BLOCK_SIZE);//120, 125, 130, 135 -> 125 - 20 / 100 = 105/100
+            int ghostpos_y = (ghost_y - 990)/(BLOCK_SIZE);//ghost_y = 990 + 1400 - 100;//2290
+            //GETTING PRIZES: 120 x 1290 = block [1][3] = 16
 
-            int ghostpos_x = (ghost_x - 20)/(BLOCK_SIZE);//GETTING PRIZES: 120 x 1290 = block [1][3] = 16
-            int ghostpos_y = (ghost_y - 990)/(BLOCK_SIZE);//screenData2[ghostpos_x][ghostpos_y]
+            int tempRand = (int)(Math.random() * range) + min;
+            //System.out.println("GHOST WALK: RAND = "+rand+" AND TEMP RAND = "+tempRand);
+            for(int x = 0; x<NUM_BLOCKS; x++){
+                for(int y = 0; y<NUM_BLOCKS; y++){
+                    if (screenData2[x][y] == 2) {
+                        screenData2[x][y] = 0;
+                    }
+                    if (screenData2[x][y] == 8) {
+                        screenData2[x][y] = 0;
+                    }
+                }
+            }
 
-            System.out.println("BEFORE PLAYER ["+player_x+"="+pos_x+"]["+player_y+"="+pos_y+"] GHOST ["+ghost_x+"="+ghostpos_x+"]["+ghost_y+"="+ghostpos_y+"]");
+            if(ghostposs_x >= 20 && ghostposs_x<=1320){
+                ghost_x +=ghost_dx;
+                if(screenData2[ghostpos_x][ghostpos_y] != 1){//border exception for diagonals (2)
+                    if(screenData2[ghostpos_x][ghostpos_y] == 16){
+                        num_prizes--;
+                    }
+                    screenData2[ghostpos_x][ghostpos_y] = 2;
+                }
+            }else{
+                while(rand == tempRand){//MAKE SURE IT IS NOT THE SAME DIRECTION
+                    tempRand = (int)(Math.random() * range) + min;
+                }
+                rand = tempRand;
+                //USE THAT DIRECTION
+                if(rand == 0){//RIGHT
+                    ghost_dx = current_speed;
+                    ghost_dy = 0;
+                }else if(rand == 1){//DOWN
+                    ghost_dx = 0;
+                    ghost_dy = -current_speed;
+                }else if(rand == 2){//LEFT
+                    ghost_dx = -current_speed;
+                    ghost_dy = 0;
+                }else if(rand == 3){//UP
+                    ghost_dx = 0;
+                    ghost_dy = current_speed;
+                }else if(rand == 4){//NE
+                    ghost_dx = current_speed;
+                    ghost_dy = current_speed;
+                }else if(rand == 5){//SW
+                    ghost_dx = -current_speed;
+                    ghost_dy = -current_speed;
+                }else if(rand == 6){//NW
+                    ghost_dx = -current_speed;
+                    ghost_dy = current_speed;
+                }else{//NE
+                    ghost_dx = current_speed;
+                    ghost_dy = -current_speed;
+                }
+            }
+            if(ghostposs_y >= 990+100 && ghostposs_y<=990+100+1300-100){//COPY ABOVE IF FOR "Y"
+                ghost_y +=ghost_dy;
+                if(screenData2[ghostpos_x][ghostpos_y] != 1){//border exception for diagonals
+                    if(screenData2[ghostpos_x][ghostpos_y] == 16){
+                        num_prizes--;
+                    }
+                    screenData2[ghostpos_x][ghostpos_y] = 2;
+                }
+            }else{
+                while(rand == tempRand){//MAKE SURE IT IS NOT THE SAME DIRECTION
+                    tempRand = (int)(Math.random() * range) + min;
+                }
+                rand = tempRand;
+                //USE THAT DIRECTION
+                if(rand == 0){//RIGHT
+                    ghost_dx = current_speed;
+                    ghost_dy = 0;
+                }else if(rand == 1){//DOWN
+                    ghost_dx = 0;
+                    ghost_dy = -current_speed;
+                }else if(rand == 2){//LEFT
+                    ghost_dx = -current_speed;
+                    ghost_dy = 0;
+                }else if(rand == 3){//UP
+                    ghost_dx = 0;
+                    ghost_dy = current_speed;
+                }else if(rand == 4){//NE
+                    ghost_dx = current_speed;
+                    ghost_dy = current_speed;
+                }else if(rand == 5){//SW
+                    ghost_dx = -current_speed;
+                    ghost_dy = -current_speed;
+                }else if(rand == 6){//NW
+                    ghost_dx = -current_speed;
+                    ghost_dy = current_speed;
+                }else{//NE
+                    ghost_dx = current_speed;
+                    ghost_dy = -current_speed;
+                }
+            }
+            //System.out.println("BEFORE PLAYER ["+player_x+"="+pos_x+"]["+player_y+"="+pos_y+"] GHOST ["+ghost_x+"="+ghostpos_x+"]["+ghost_y+"="+ghostpos_y+"]");
             //[124=1][2288=12] GHOST [120=1][2290=13]
             if(poss_x >= 20 && poss_x<=1320){//AS LONG AS POSSIBLE POSITION IS WITHIN BOUNDARIES
                 //START + BOXES - (2 * BOX_SIZE) = 20 + 1300-100 = 1220
                 if(screenData2[pos_x][pos_y] == 16){//CHECK NEXT SPOT FOR PRIZE
                     //0 = NOTHING; 1 = BORDER; 2 = GHOST; 8 = PLAYER; 16 = PRIZE
                     study+=2;
+                    num_prizes--;
                 }
                 if(screenData2[pos_x][pos_y] == 2){//CHECK NEXT SPOT FOR GHOST
-                    hygiene--;
-                    System.out.println("X1 == "+hygiene);
+                    //System.out.println("X1 == "+hygiene);
                     dead = true;
                 }
                 screenData2[pos_x][pos_y] = 0;//OLD POS = 0 = NOTHING
                 player_x +=player_dx;//UPDATE POS
                 if(screenData2[pos_x][pos_y] == 16){
                     study+=2;
+                    num_prizes--;
                 }
                 if(screenData2[pos_x][pos_y] == 2){
-                    hygiene--;
-                    System.out.println("X2 == "+hygiene);
+                    //System.out.println("X2 == "+hygiene);
                     dead = true;
                 }
                 screenData2[pos_x][pos_y] = 8;//NEW POS = 8 = PLAYER
             }else{//IF POSS POS OUT OF BOUNDARY STOP PLAYER
                 player_dx = 0;
             }
+            System.out.println("STUDY == "+study);
             if(poss_y >= 990+100 && poss_y<=990+100+1300-100){//COPY ABOVE IF FOR "Y"
                 if(screenData2[pos_x][pos_y] == 16){
                     study+=2;
+                    num_prizes--;
                 }
                 if(screenData2[pos_x][pos_y] == 2){//CHECK NEXT SPOT FOR GHOST
-                    hygiene--;
-                    System.out.println("Y1 == "+hygiene);
+                    //System.out.println("Y1 == "+hygiene);
                     dead = true;
                 }
                 screenData2[pos_x][pos_y] = 0;
                 player_y +=player_dy;
                 if(screenData2[pos_x][pos_y] == 16){
                     study+=2;
+                    num_prizes--;
                 }
                 if(screenData2[pos_x][pos_y] == 2){
-                    hygiene--;
-                    System.out.println("Y2 == "+hygiene);
+                    //System.out.println("Y2 == "+hygiene);
                     dead = true;
                 }
                 screenData2[pos_x][pos_y] = 8;
@@ -312,10 +487,10 @@ public class Study {
             }
 
             batch.begin();
-            //MOVE GHOSTS: TODO
-
+            //DRAW GHOSTS
+            //batch.draw(hulu, ghost_x,ghost_y,BLOCK_SIZE,BLOCK_SIZE);
             //DRAW PACMAN
-            if(req_dx == -1){
+            /*if(req_dx == -1){
                 batch.draw(player_left, player_x,player_y,BLOCK_SIZE,BLOCK_SIZE);
             }else if(req_dx == 1){
                 batch.draw(player_right, player_x,player_y, BLOCK_SIZE,BLOCK_SIZE);
@@ -323,7 +498,7 @@ public class Study {
                 batch.draw(player_up, player_x,player_y,BLOCK_SIZE,BLOCK_SIZE);
             }else{
                 batch.draw(player_down, player_x,player_y,BLOCK_SIZE,BLOCK_SIZE);
-            }
+            }*/
             //DRAW MAZE:
             int i = 0;
             int j = 0;
@@ -331,13 +506,24 @@ public class Study {
             for(y = 990; y<SCREEN_SIZE+990; y+=BLOCK_SIZE){
                 for(x = 20; x<SCREEN_SIZE+20; x+= BLOCK_SIZE){
                     if(i <NUM_BLOCKS && j <NUM_BLOCKS){
-                        if((screenData2[i][j] & 1)!= 0){
+                        if(screenData2[i][j] == 1){
                             batch.draw(blocks, x,y,BLOCK_SIZE,BLOCK_SIZE);
                         }
-                        if((screenData2[i][j] & 2)!= 0){
+                        if(screenData2[i][j] == 2){
                             batch.draw(netflix, x,y,BLOCK_SIZE,BLOCK_SIZE);
                         }
-                        if((screenData2[i][j] & 16) !=0){
+                        if(screenData2[i][j] == 8){
+                            if(req_dx == -1){
+                                batch.draw(player_left, x,y,BLOCK_SIZE,BLOCK_SIZE);
+                            }else if(req_dx == 1){
+                                batch.draw(player_right, x,y, BLOCK_SIZE,BLOCK_SIZE);
+                            } else if(req_dy == 1){
+                                batch.draw(player_up, x,y,BLOCK_SIZE,BLOCK_SIZE);
+                            }else{
+                                batch.draw(player_down, x,y,BLOCK_SIZE,BLOCK_SIZE);
+                            }
+                        }
+                        if(screenData2[i][j] == 16){
                             batch.draw(book, x,y,BLOCK_SIZE,BLOCK_SIZE);
                         }
                     }
@@ -346,13 +532,87 @@ public class Study {
                 i=0;
                 j++;
             }
-
             batch.end();
             stage.act(Gdx.graphics.getDeltaTime());
             stage.draw();
         }
     }
 }
+
+            /*
+            int max = 3;
+            int min = 0;
+            int range = max - min + 1;
+            int rand = (int)(Math.random() * range) + min;
+            if(rand == 0){//RIGHT
+                ghost_dx = current_speed;
+                ghost_dy = 0;
+            }else if(rand == 1){//DOWN
+                ghost_dx = 0;
+                ghost_dy = -current_speed;
+            }else if(rand == 2){//LEFT
+                ghost_dx = -current_speed;
+                ghost_dy = 0;
+            }else{//UP
+                ghost_dx = 0;
+                ghost_dy = current_speed;
+            }
+            //=======================
+            int pos2;
+            int count;
+            for(int i = 0; i <num_ghosts; i++){
+                if(ghost_x[i] % BLOCK_SIZE == 0 && ghost_y[i] % BLOCK_SIZE == 0){
+                    //pos = ghost_x[i] / BLOCK_SIZE + N_BLOCKS * (int) (ghost_y[i] / BLOCK_SIZE); TODO
+                    pos2 = ghost_x[i] / BLOCK_SIZE + NUM_BLOCKS * (int) (ghost_y[i] / BLOCK_SIZE);
+
+                    count = 0;
+                    if((screenData[pos2] & 1) == 0 && ghost_dx[i] != 1){
+                        dx[count] = -1;
+                        dy[count] = 0;
+                        count++;
+                    }
+                    if((screenData[pos2] & 2) == 0 && ghost_dx[i] != 1){
+                        dx[count] = 0;
+                        dy[count] = -1;
+                        count++;
+                    }if((screenData[pos2] & 4) == 0 && ghost_dx[i] != -1){
+                        dx[count] = 1;
+                        dy[count] = 0;
+                        count++;
+                    }if((screenData[pos2] & 1) == 0 && ghost_dx[i] != -1){
+                        dx[count] = 0;
+                        dy[count] = 1;
+                        count++;
+                    }
+
+                    if(count == 0){
+                        if((screenData[pos2] & 15) == 15){
+                            ghost_dx[i] = 0;
+                            ghost_dy[i] = 0;
+                        }else{
+                            ghost_dx[i] = -ghost_dx[i];
+                            ghost_dy[i] = -ghost_dy[i];
+                        }
+                    }else{
+                        count = (int)(Math.random()*count);
+                        if(count>3){
+                            count = 3;
+                        }
+
+                        ghost_dy[i] = dy[count];
+                        ghost_dx[i] = dx[count];
+                    }
+                }
+                ghost_x[i] = ghost_x[i]+(ghost_dx[i]*ghost_speed[i]);
+                ghost_y[i] = ghost_y[i]+(ghost_dy[i]*ghost_speed[i]);
+                //DRAW GHOST
+                batch.draw(netflix, player_x +1, player_y +1, BLOCK_SIZE,BLOCK_SIZE);//DIFF PICS TODO
+                //IF PLAYER TOUCHES DISTRACTIONS
+                if(player_x > (ghost_x[i] -12) && player_x < (ghost_x[i] +12)
+                        && player_y > (ghost_y[i] -12) && player_y < (ghost_y[i] +12)){//if pacman
+                    dead = true;
+                }
+            }*/
 /*IN CREATE
         //screenData = new short[NUM_BLOCKS*NUM_BLOCKS];
         dx= new int [4];
@@ -414,64 +674,7 @@ public class Study {
             }
             player_x = player_x + current_speed * player_x;
             player_y = player_y + current_speed * player_y;
-*/
-//MOVE GHOSTS
-            /*
-            int pos2;
-            int count;
-            for(int i = 0; i <num_ghosts; i++){
-                if(ghost_x[i] % BLOCK_SIZE == 0 && ghost_y[i] % BLOCK_SIZE == 0){
-                    //pos = ghost_x[i] / BLOCK_SIZE + N_BLOCKS * (int) (ghost_y[i] / BLOCK_SIZE); TODO
-                    pos2 = ghost_x[i] / BLOCK_SIZE + NUM_BLOCKS * (int) (ghost_y[i] / BLOCK_SIZE);
 
-                    count = 0;
-                    if((screenData[pos2] & 1) == 0 && ghost_dx[i] != 1){
-                        dx[count] = -1;
-                        dy[count] = 0;
-                        count++;
-                    }
-                    if((screenData[pos2] & 2) == 0 && ghost_dx[i] != 1){
-                        dx[count] = 0;
-                        dy[count] = -1;
-                        count++;
-                    }if((screenData[pos2] & 4) == 0 && ghost_dx[i] != -1){
-                        dx[count] = 1;
-                        dy[count] = 0;
-                        count++;
-                    }if((screenData[pos2] & 1) == 0 && ghost_dx[i] != -1){
-                        dx[count] = 0;
-                        dy[count] = 1;
-                        count++;
-                    }
-
-                    if(count == 0){
-                        if((screenData[pos2] & 15) == 15){
-                            ghost_dx[i] = 0;
-                            ghost_dy[i] = 0;
-                        }else{
-                            ghost_dx[i] = -ghost_dx[i];
-                            ghost_dy[i] = -ghost_dy[i];
-                        }
-                    }else{
-                        count = (int)(Math.random()*count);
-                        if(count>3){
-                            count = 3;
-                        }
-
-                        ghost_dy[i] = dy[count];
-                        ghost_dx[i] = dx[count];
-                    }
-                }
-                ghost_x[i] = ghost_x[i]+(ghost_dx[i]*ghost_speed[i]);
-                ghost_y[i] = ghost_y[i]+(ghost_dy[i]*ghost_speed[i]);
-                //DRAW GHOST
-                batch.draw(netflix, player_x +1, player_y +1, BLOCK_SIZE,BLOCK_SIZE);//DIFF PICS TODO
-                //IF PLAYER TOUCHES DISTRACTIONS
-                if(player_x > (ghost_x[i] -12) && player_x < (ghost_x[i] +12)
-                        && player_y > (ghost_y[i] -12) && player_y < (ghost_y[i] +12)){//if pacman
-                    dead = true;
-                }
-            }*/
 //DRAW PACMAN
             /*if(req_dx == -1){
                 batch.draw(player_left, player_x +1, player_y +1, BLOCK_SIZE,BLOCK_SIZE);
