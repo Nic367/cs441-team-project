@@ -108,7 +108,7 @@ public class Study {
 
     public void create(){
         bg = new Texture(Gdx.files.internal("study/deadbg.png"));
-        blocks = new Texture(Gdx.files.internal("blocks.png"));
+        blocks = new Texture(Gdx.files.internal("study/blocks.png"));
         //player images
         player_up = new Texture(Gdx.files.internal("study/img09.png"));
         player_down = new Texture(Gdx.files.internal("study/img01.png"));
