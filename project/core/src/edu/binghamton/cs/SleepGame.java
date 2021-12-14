@@ -47,7 +47,8 @@ public class SleepGame implements Screen {
     Integer timer;
     float timecount;
     float tilecount;
-    Dorm dorm = new Dorm();
+
+    Boolean over;
 
 
     public SleepGame(Sleep game){
@@ -80,6 +81,9 @@ public class SleepGame implements Screen {
         timecount = 0;
         tilecount = 0;
 
+        over = false;
+
+        Dorm.needs[0] = 7;
     }
 
     public void createTiles(){
@@ -118,15 +122,17 @@ public class SleepGame implements Screen {
     }
 
     public void update(float dt){
-        tilecount += 1.75*dt;
-        if(tilecount >= 1){
-            createTiles();
-            tilecount = 0;
-        }
-        timecount += dt;
-        if(timecount >= 1){
-            timer--;
-            timecount = 0;
+        if(timer > 0) {
+            tilecount += 1.75 * dt;
+            if (tilecount >= 1) {
+                createTiles();
+                tilecount = 0;
+            }
+            timecount += dt;
+            if (timecount >= 1) {
+                timer--;
+                timecount = 0;
+            }
         }
 
     }
@@ -138,6 +144,8 @@ public class SleepGame implements Screen {
 
 
         game.batch.begin();
+        if(over)
+            game.font.draw(game.batch, "Tap to continue", 500, 500);
         game.batch.draw(sleeperImage, 0.5f*screenWidth-150,0.5f*screenHeight-250,300,500);
         for(Rectangle i: tiles){
             game.batch.draw(tileImage, i.x, i.y, 200, 200);
@@ -185,15 +193,23 @@ public class SleepGame implements Screen {
                 game.missed++;
             }
 
+
             game.status = (game.missed > 64) ? 0 : (8 - (Math.floorDiv(game.missed,8)));
 
         }
 
         // END OF GAME
-        if(timer < 1){
-            TeamProject.gameState = game.states[0];
-            dorm.needs[0] = 3;
-            dispose();
+        if(timer == 0){
+            over = true;
+            Dorm.needs[0] = game.status;
+            Dorm.updateStatusBars(0);
+            if(Gdx.input.isTouched()) {
+                TeamProject.gameState = game.states[0];
+                timer = 40;
+                game.missed = 0;
+                over = false;
+                //dispose();
+            }
         }
     }
 

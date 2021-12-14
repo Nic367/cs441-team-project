@@ -311,10 +311,27 @@ public class Study {
     public void render(){
         if(dead){
             Gdx.input.setInputProcessor(stage2);
-            health_f = -health;
-            hygiene_f = -hygiene;
-            sleep_f = -sleep;
-            study_f = study;
+            health_f = -health;//needs[5] DONE
+            hygiene_f = -hygiene;//needs[2] DONE
+            sleep_f = -sleep;//needs[0] DONE
+            study_f = study;//needs[1] DONE
+            
+            while(Dorm.needs[1]<8 && study!=0){
+                Dorm.needs[1]++;
+                study--;
+            }
+            while(Dorm.needs[0]>0 && sleep!=0){
+                Dorm.needs[0]--;
+                sleep--;
+            }
+            while(Dorm.needs[2]>0 && hygiene!=0){
+                Dorm.needs[2]--;
+                hygiene--;
+            }
+            while(Dorm.needs[5]>0 && health!=0){
+                Dorm.needs[5]--;
+                health--;
+            }
 
             Gdx.gl.glClearColor(0,0,0,1);
             Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT);
