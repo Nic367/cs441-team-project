@@ -83,6 +83,7 @@ public class SleepGame implements Screen {
 
         over = false;
 
+        Dorm.needs[0] = 7;
     }
 
     public void createTiles(){
@@ -200,9 +201,14 @@ public class SleepGame implements Screen {
         // END OF GAME
         if(timer == 0){
             over = true;
+            Dorm.needs[0] = game.status;
+            Dorm.updateStatusBars(0);
             if(Gdx.input.isTouched()) {
                 TeamProject.gameState = game.states[0];
-                dispose();
+                timer = 40;
+                game.missed = 0;
+                over = false;
+                //dispose();
             }
         }
     }
