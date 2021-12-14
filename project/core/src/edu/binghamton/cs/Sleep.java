@@ -27,6 +27,9 @@ public class Sleep extends Game {
     Texture bg;
     TextureRegion region;
 
+    int status = 0;
+    int missed = 0;
+
     public void create(){
         batch = new SpriteBatch();
         font = new BitmapFont();

@@ -39,7 +39,6 @@ public class TeamProject extends ApplicationAdapter {
 	TextureRegion region;
 	TextureRegionDrawable drawable;
 	ImageButton button;
-	Music track;
 
 	@Override
 	public void create () {

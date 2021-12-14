@@ -49,15 +49,11 @@ public class SleepGame implements Screen {
     float tilecount;
     Dorm dorm = new Dorm();
 
-    Music track;
-
 
     public SleepGame(Sleep game){
         this.game = game;
         screenWidth = Gdx.graphics.getWidth();
         screenHeight = Gdx.graphics.getHeight();
-
-        track = Gdx.audio.newMusic(Gdx.files.internal("imonlysleepingrehearsal.mp3"));
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false);
@@ -80,9 +76,10 @@ public class SleepGame implements Screen {
         createTiles();
 
         //TIMER
-        timer = 4;
+        timer = 40;
         timecount = 0;
         tilecount = 0;
+
     }
 
     public void createTiles(){
@@ -117,7 +114,7 @@ public class SleepGame implements Screen {
 
     @Override
     public void show() {
-        //track.play();
+
     }
 
     public void update(float dt){
@@ -146,6 +143,7 @@ public class SleepGame implements Screen {
             game.batch.draw(tileImage, i.x, i.y, 200, 200);
         }
         game.font.draw(game.batch, "Time: " + timer, screenWidth-350, screenHeight-100);
+        game.font.draw(game.batch,"Missed: " + game.missed, 50, screenHeight-100);
         game.batch.end();
 
 
@@ -153,25 +151,25 @@ public class SleepGame implements Screen {
             Rectangle tile = iterator.next();
             //Left to center
             if(tile.x < screenWidth*0.5f) {
-                tile.x += 1000 * Gdx.graphics.getDeltaTime();
+                tile.x += 700 * Gdx.graphics.getDeltaTime();
                 if(Gdx.input.isKeyJustPressed(Input.Keys.LEFT))
                     iterator.remove();
             }
             //Right to center
             else if(tile.x > screenWidth*0.5f) {
-                tile.x -= 1000 * Gdx.graphics.getDeltaTime();
+                tile.x -= 700 * Gdx.graphics.getDeltaTime();
                 if(Gdx.input.isKeyJustPressed(Input.Keys.RIGHT))
                     iterator.remove();
             }
             //Top to center
             else if(tile.y > screenHeight*0.5f){
-                tile.y -= 1500 * Gdx.graphics.getDeltaTime();
+                tile.y -= 1000 * Gdx.graphics.getDeltaTime();
                 if(Gdx.input.isKeyJustPressed(Input.Keys.UP))
                     iterator.remove();
             }
             //Bottom to center
             else {
-                tile.y += 1500 * Gdx.graphics.getDeltaTime();
+                tile.y += 1000 * Gdx.graphics.getDeltaTime();
                 if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN))
                     iterator.remove();
             }
@@ -182,8 +180,12 @@ public class SleepGame implements Screen {
                 if(tile.contains(touchpos.x, touchpos.y))
                     iterator.remove();
             }
-            if(tile.overlaps(sleeper))
+            if(tile.overlaps(sleeper)) {
                 iterator.remove();
+                game.missed++;
+            }
+
+            game.status = (game.missed > 64) ? 0 : (8 - (Math.floorDiv(game.missed,8)));
 
         }
 
@@ -220,6 +222,5 @@ public class SleepGame implements Screen {
 
         tileImage.dispose();
         sleeperImage.dispose();
-        track.dispose();
     }
 }
