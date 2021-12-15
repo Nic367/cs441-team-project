@@ -128,7 +128,7 @@ public class Hunger {
         backButton.setPosition(0,0);
         backButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y){
-                if(hearts==0){
+                if(hearts==0 || hunger>=8){ //Out of lives or hunger is full
                     TeamProject.gameState = DORM;
                     foodCaught=0;
                     hearts=3;
@@ -142,11 +142,11 @@ public class Hunger {
     }
 
     public void render(){
-
         Gdx.input.setInputProcessor(stage);
         Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT);
 
-        if(hearts==0){
+        /* ====== DEATH SCREEN  ====== */
+        if(hearts==0 || hunger>=8){
             stage.draw();
             batch.begin();
             batch.draw(bg, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight()); //Background
@@ -156,20 +156,19 @@ public class Hunger {
             pressToContinue.draw(batch,"Tap screen to continue...",40,150,Gdx.graphics.getWidth(), 5,true);
             batch.end();
         }
+        /* ====== GAME SCREEN  ====== */
         else {
             batch.begin();
             batch.draw(bg, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight()); //Background
 
-            /* ====== Top Health Bar  ====== */
+            /* ====== TOP HEALTH BAR  ====== */
             int x = 20;
             for (int i = 0; i < hearts; i++) {
                 batch.draw(head, x, Gdx.graphics.getHeight() - 220, 200, 200);
                 x += 220;
             }
 
-            /* ====== Text ====== */
-
-            //font.draw(batch, "This is the food minigame", 0, Gdx.graphics.getHeight(),Gdx.graphics.getWidth(),10,true);
+            /* ====== TIMER ====== */
             if (timer / 1_000_000_000 < 10) {
                 timer_text.draw(batch, "0:0" + timer / 1_000_000_000, Gdx.graphics.getWidth() - 200, Gdx.graphics.getHeight(), Gdx.graphics.getWidth(), 10, true);
             } else {
@@ -218,22 +217,18 @@ public class Hunger {
                     if (food.goodOrBad == 2 || food.goodOrBad == 3) { //The food is one you want to catch
                         food.rect.set(food.x, food.y, 200, 200);
                         food.visiblebox.end();
-
                         food.batch.begin(); //Drawing Book
                         food.batch.draw(food.texture, food.x, food.y, 200, 200);
                         food.batch.end();
+                        food.y -= 15;
                     } else { // The food is rotten/garbage and you don't want to catch it
                         food.rect.set(food.x, food.y, 200, 200);
-                        food.batch.begin(); //Drawing Book
+                        food.batch.begin();
                         food.batch.draw(food.texture, food.x, food.y, 200, 200);
                         food.batch.end();
-
-                        //Hygeine down
                         food.visiblebox.end();
+                        food.y -= 15;
                     }
-
-                    /* movement */
-                    food.y -= 15;
                 }
 
                 if (hitbox.overlaps(food.rect)) { //If the player catches the food
