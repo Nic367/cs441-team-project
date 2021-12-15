@@ -25,7 +25,8 @@ public class Dorm {
 
     //Needs
     public float timer = 0;
-    static public int[] needs = {7, 7, 7, 7, 7, 7}; //Sleep=0, Study=1, hygiene=2, fun=3, hunger=4, fitness=5
+    public float bathroomTimer = 0;
+    static public int[] needs = {4, 4, 1, 1, 4, 4}; //Sleep=0, Study=1, hygiene=2, fun=3, hunger=4, fitness=5
 
     //Status Bars (8 levels. 0=Empty. 8=Full)
     static ArrayList<Texture> statusBars = new ArrayList<>();
@@ -60,6 +61,9 @@ public class Dorm {
     TextureRegion entertainmentRegion;
     TextureRegionDrawable entertainmentDrawable;
     ImageButton entertainmentButton;
+    int watchingTV = 0;
+    int atTV = 0;
+    int tvBG = 0;
 
     //Sleep Button
     Texture sleepImg;
@@ -78,6 +82,8 @@ public class Dorm {
     TextureRegion doorRegion;
     TextureRegionDrawable doorDrawable;
     ImageButton doorButton;
+    int inBathoom = 0;
+    int atBathoom = 0;
 
     //Study Button
     Texture studyImg;
@@ -96,6 +102,7 @@ public class Dorm {
     TextureRegion hungerRegion;
     TextureRegionDrawable hungerDrawable;
     ImageButton hungerButton;
+
 
     // Character
     int[][] positions = new int[6][2]; //A list of positions the character can walk to
@@ -127,7 +134,9 @@ public class Dorm {
         sleepButton.setPosition(Gdx.graphics.getWidth()-1250,Gdx.graphics.getHeight()-1150);
         sleepButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y){
-                TeamProject.gameState = "sleep_minigame";
+                if(inBathoom==0 && watchingTV == 0) {
+                    TeamProject.gameState = "sleep_minigame";
+                }
             }
         });
 
@@ -140,7 +149,9 @@ public class Dorm {
         sleepButton2.setPosition(Gdx.graphics.getWidth()-880,Gdx.graphics.getHeight()-920);
         sleepButton2.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y){
-                TeamProject.gameState = "sleep_minigame";
+                if(inBathoom==0 && watchingTV == 0) {
+                    TeamProject.gameState = "sleep_minigame";
+                }
             }
         });
 
@@ -153,7 +164,9 @@ public class Dorm {
         studyButton.setPosition(Gdx.graphics.getWidth()-275,Gdx.graphics.getHeight()-890);
         studyButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y){
-                TeamProject.gameState = "study_minigame";
+                if(inBathoom==0 && watchingTV == 0) {
+                    TeamProject.gameState = "study_minigame";
+                }
             }
         });
 
@@ -166,7 +179,9 @@ public class Dorm {
         fitnessButton.setPosition(Gdx.graphics.getWidth()-1020,Gdx.graphics.getHeight()-310);
         fitnessButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y){
-                TeamProject.gameState = "sport_minigame";
+                if(inBathoom==0 && watchingTV == 0) {
+                    TeamProject.gameState = "sport_minigame";
+                }
             }
         });
 
@@ -179,7 +194,9 @@ public class Dorm {
         hungerButton.setPosition(Gdx.graphics.getWidth()/2-105,Gdx.graphics.getHeight()/2-30);
         hungerButton.addListener(   new ClickListener() {
             public void clicked(InputEvent event, float x, float y){
-                TeamProject.gameState = "food_minigame";
+                if(inBathoom==0 && watchingTV == 0){
+                    TeamProject.gameState = "food_minigame";
+                }
             }
         });
 
@@ -192,7 +209,9 @@ public class Dorm {
         doorButton.setPosition(0,Gdx.graphics.getHeight()-1440);
         doorButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y){
-                //Change bool inBathroom to true. In render make char walk to door and vanish for 5 secs
+                if(inBathoom==0 && watchingTV == 0){
+                    inBathoom = 1;
+                }
             }
         });
 
@@ -205,7 +224,9 @@ public class Dorm {
         entertainmentButton.setPosition(Gdx.graphics.getWidth()-375,Gdx.graphics.getHeight()-635);
         entertainmentButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y){
-                //Change bool inBathroom to true. In render make char walk to door and vanish for 5 secs
+                if(inBathoom==0 && watchingTV == 0){
+                    watchingTV = 1;
+                }
             }
         });
 
@@ -213,12 +234,12 @@ public class Dorm {
         bg = new Texture(Gdx.files.internal("data/dorm/dormBG.png"));
 
         //Status Bars
-        sleepStatus = new Texture(Gdx.files.internal(status8));
-        studyStatus = new Texture(Gdx.files.internal(status8));
-        bathroomStatus = new Texture(Gdx.files.internal(status8));
-        hungerStatus = new Texture(Gdx.files.internal(status8));
-        happinessStatus = new Texture(Gdx.files.internal(status8));
-        fitnessStatus = new Texture(Gdx.files.internal(status8));
+        sleepStatus = new Texture(Gdx.files.internal(status4));
+        studyStatus = new Texture(Gdx.files.internal(status4));
+        bathroomStatus = new Texture(Gdx.files.internal(status4));
+        hungerStatus = new Texture(Gdx.files.internal(status4));
+        happinessStatus = new Texture(Gdx.files.internal(status4));
+        fitnessStatus = new Texture(Gdx.files.internal(status4));
         statusBars.add(sleepStatus);
         statusBars.add(studyStatus);
         statusBars.add(bathroomStatus);
@@ -283,20 +304,101 @@ public class Dorm {
             }
         }
 
-        if(mc_pos[0] < positions[new_pos_index][0]){ //Current x is less than destination x
-            mc_pos[0]+=2;
+        if(inBathoom==0 && watchingTV == 0){
+            if(mc_pos[0] < positions[new_pos_index][0]){ //Current x is less than destination x
+                mc_pos[0]+=2;
+            }
+            else{ //Current x is greater than destination x
+                mc_pos[0]-=2;
+            }
+            if(mc_pos[1] < positions[new_pos_index][1]){ //Current y is less than destination y
+                mc_pos[1]+=2;
+            }
+            else{ //Current y is greater than destination y
+                mc_pos[1]-=2;
+            }
         }
-        else{ //Current x is greater than destination x
-            mc_pos[0]-=2;
-        }
-        if(mc_pos[1] < positions[new_pos_index][1]){ //Current y is less than destination y
-            mc_pos[1]+=2;
-            //System.out.println("Current location: ["+mc_pos[0]+", "+mc_pos[1]+"]");
-        }
-        else{ //Current y is greater than destination y
-            mc_pos[1]-=2;
-        }
+        else if (inBathoom==1){
+            if(atBathoom==0) {
+                dir = "left";
+                int[] dest = {-400, 1000};
+                if (mc_pos[0] < dest[0]) { //Current x is less than destination x
+                    mc_pos[0] += 2;
+                } else { //Current x is greater than destination x
+                    mc_pos[0] -= 2;
+                }
+                if (mc_pos[1] < dest[1]) { //Current y is less than destination y
+                    mc_pos[1] += 2;
+                } else { //Current y is greater than destination y
+                    mc_pos[1] -= 2;
+                }
+                if(mc_pos[0]==dest[0] && mc_pos[1]==dest[1]){
+                    atBathoom = 1;
+                }
+            }
+            if(atBathoom == 1){
+                if(bathroomTimer >= 1){
+                    bathroomTimer=0;
+                    if (Dorm.needs[2] < 8) {
+                        Dorm.needs[2]++; //fun up
+                        Dorm.updateStatusBars(2);
+                    }
+                }
+                else{
+                    bathroomTimer+=Gdx.graphics.getDeltaTime();
+                }
 
+                if(Dorm.needs[2] >= 8){
+                    atBathoom=0;
+                    dir = "right";
+                    inBathoom=0;
+                }
+            }
+        }
+        else if (watchingTV == 1){
+            dir = "right";
+            int[] dest = {1200, 1000};
+            if (mc_pos[0] < dest[0]) { //Current x is less than destination x
+                mc_pos[0] += 2;
+            } else { //Current x is greater than destination x
+                mc_pos[0] -= 2;
+            }
+            if (mc_pos[1] < dest[1]) { //Current y is less than destination y
+                mc_pos[1] += 2;
+            } else { //Current y is greater than destination y
+                mc_pos[1] -= 2;
+            }
+            if(mc_pos[0]==dest[0] && mc_pos[1]==dest[1]){
+                atTV = 1;
+            }
+        }
+        if(atTV == 1){
+            if(bathroomTimer >= 1){
+                bathroomTimer=0;
+                if (Dorm.needs[3] < 8) {
+                    Dorm.needs[3]++; //fun up
+                    Dorm.updateStatusBars(3);
+                    if(tvBG==0){
+                        bg = new Texture(Gdx.files.internal("data/dorm/tvBG1.jpg"));
+                        tvBG = 1;
+                    }
+                    else{
+                        bg = new Texture(Gdx.files.internal("data/dorm/tvBG2.jpg"));
+                        tvBG = 0;
+                    }
+                }
+            }
+            else{
+                bathroomTimer+=Gdx.graphics.getDeltaTime();
+            }
+
+            if(Dorm.needs[3] >= 8){
+                watchingTV = 0;
+                dir = "left";
+                atTV = 0;
+                bg = new Texture(Gdx.files.internal("data/dorm/dormBG.png"));
+            }
+        }
 
         // Dropping a random need every 5-10 seconds
         int rand = ThreadLocalRandom.current().nextInt(5,10)%Gdx.graphics.getWidth();
