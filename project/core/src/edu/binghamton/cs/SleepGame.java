@@ -159,37 +159,32 @@ public class SleepGame implements Screen {
             Rectangle tile = iterator.next();
             //Left to center
             if(tile.x < screenWidth*0.5f) {
-                tile.x += 700 * Gdx.graphics.getDeltaTime();
+                tile.x += 800 * Gdx.graphics.getDeltaTime();
                 if(Gdx.input.isKeyJustPressed(Input.Keys.LEFT))
                     iterator.remove();
             }
             //Right to center
             else if(tile.x > screenWidth*0.5f) {
-                tile.x -= 700 * Gdx.graphics.getDeltaTime();
+                tile.x -= 900 * Gdx.graphics.getDeltaTime();
                 if(Gdx.input.isKeyJustPressed(Input.Keys.RIGHT))
                     iterator.remove();
             }
             //Top to center
             else if(tile.y > screenHeight*0.5f){
-                tile.y -= 1000 * Gdx.graphics.getDeltaTime();
+                tile.y -= 1300 * Gdx.graphics.getDeltaTime();
                 if(Gdx.input.isKeyJustPressed(Input.Keys.UP))
                     iterator.remove();
             }
             //Bottom to center
             else {
-                tile.y += 1000 * Gdx.graphics.getDeltaTime();
+                tile.y += 1300 * Gdx.graphics.getDeltaTime();
                 if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN))
                     iterator.remove();
             }
-            if(Gdx.input.isTouched()){
-                Vector3 touchpos = new Vector3();
-                touchpos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
-                camera.unproject(touchpos);
-                if(tile.contains(touchpos.x, touchpos.y))
-                    iterator.remove();
-            }
             if(tile.overlaps(sleeper)) {
-                iterator.remove();
+                if(iterator == null)
+                    continue;
+                else iterator.remove();
                 game.missed++;
             }
 
