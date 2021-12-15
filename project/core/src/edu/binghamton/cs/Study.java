@@ -297,6 +297,8 @@ public class Study {
         font.getData().setScale(9f);
         font2 = new BitmapFont();
         font2.getData().setScale(7f);
+        font.setColor(Color.BLACK);
+        font2.setColor(Color.BLACK);
 
         //Staging
         stage = new Stage(new ScreenViewport());
