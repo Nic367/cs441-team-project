@@ -26,7 +26,7 @@ public class Dorm {
     //Needs
     public float timer = 0;
     public float bathroomTimer = 0;
-    static public int[] needs = {4, 4, 1, 1, 4, 4}; //Sleep=0, Study=1, hygiene=2, fun=3, hunger=4, fitness=5
+    static public int[] needs = {4, 4, 4, 4, 4, 4}; //Sleep=0, Study=1, hygiene=2, fun=3, hunger=4, fitness=5
 
     //Status Bars (8 levels. 0=Empty. 8=Full)
     static ArrayList<Texture> statusBars = new ArrayList<>();
@@ -64,6 +64,7 @@ public class Dorm {
     int watchingTV = 0;
     int atTV = 0;
     int tvBG = 0;
+    int justGotToTV = 0;
 
     //Sleep Button
     Texture sleepImg;
@@ -111,6 +112,7 @@ public class Dorm {
     Animation<TextureRegion> leftWalkAnimation;
     Animation<TextureRegion> rightWalkAnimation;
     TextureRegion currentFrame;
+    Texture mc_dead;
     SpriteBatch mc_batch;
     float stateTime;
     String dir = "left";
@@ -134,7 +136,7 @@ public class Dorm {
         sleepButton.setPosition(Gdx.graphics.getWidth()-1250,Gdx.graphics.getHeight()-1150);
         sleepButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y){
-                if(inBathoom==0 && watchingTV == 0) {
+                if(inBathoom==0 && watchingTV == 0 && isDead()==0) {
                     TeamProject.gameState = "sleep_minigame";
                 }
             }
@@ -149,7 +151,7 @@ public class Dorm {
         sleepButton2.setPosition(Gdx.graphics.getWidth()-880,Gdx.graphics.getHeight()-920);
         sleepButton2.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y){
-                if(inBathoom==0 && watchingTV == 0) {
+                if(inBathoom==0 && watchingTV == 0 && isDead()==0) {
                     TeamProject.gameState = "sleep_minigame";
                 }
             }
@@ -164,7 +166,7 @@ public class Dorm {
         studyButton.setPosition(Gdx.graphics.getWidth()-275,Gdx.graphics.getHeight()-890);
         studyButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y){
-                if(inBathoom==0 && watchingTV == 0) {
+                if(inBathoom==0 && watchingTV == 0 && isDead()==0) {
                     TeamProject.gameState = "study_minigame";
                 }
             }
@@ -179,7 +181,7 @@ public class Dorm {
         fitnessButton.setPosition(Gdx.graphics.getWidth()-1020,Gdx.graphics.getHeight()-310);
         fitnessButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y){
-                if(inBathoom==0 && watchingTV == 0) {
+                if(inBathoom==0 && watchingTV == 0 && isDead()==0) {
                     TeamProject.gameState = "sport_minigame";
                 }
             }
@@ -194,7 +196,7 @@ public class Dorm {
         hungerButton.setPosition(Gdx.graphics.getWidth()/2-105,Gdx.graphics.getHeight()/2-30);
         hungerButton.addListener(   new ClickListener() {
             public void clicked(InputEvent event, float x, float y){
-                if(inBathoom==0 && watchingTV == 0){
+                if(inBathoom==0 && watchingTV == 0 && isDead()==0){
                     TeamProject.gameState = "food_minigame";
                 }
             }
@@ -209,11 +211,14 @@ public class Dorm {
         doorButton.setPosition(0,Gdx.graphics.getHeight()-1440);
         doorButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y){
-                if(inBathoom==0 && watchingTV == 0){
+                if(inBathoom==0 && watchingTV == 0 && isDead()==0){
                     inBathoom = 1;
                 }
             }
         });
+
+        //MC dead pose
+        mc_dead = new Texture(Gdx.files.internal("data/dorm/mc_dead.png"));
 
         //Entertainment Button
         entertainmentImg = new Texture(Gdx.files.internal("data/dorm/entertainmentButton.png"));
@@ -224,7 +229,7 @@ public class Dorm {
         entertainmentButton.setPosition(Gdx.graphics.getWidth()-375,Gdx.graphics.getHeight()-635);
         entertainmentButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y){
-                if(inBathoom==0 && watchingTV == 0){
+                if(inBathoom==0 && watchingTV == 0 && isDead()==0){
                     watchingTV = 1;
                 }
             }
@@ -281,25 +286,36 @@ public class Dorm {
 
 
         //Drawing the character to the screen
-        if(dir=="left"){
-            currentFrame = leftWalkAnimation.getKeyFrame(stateTime, true);
-        }else{
-            currentFrame = rightWalkAnimation.getKeyFrame(stateTime, true);
-        }
         mc_batch.begin();
-        mc_batch.draw(currentFrame, mc_pos[0], mc_pos[1], 286,720);
+        if(isDead()==1){
+            currentFrame = new TextureRegion(mc_dead);
+            mc_batch.draw(currentFrame, mc_pos[0], mc_pos[1], 720,286);
+        }
+        else{
+            if(dir=="left"){
+                currentFrame = leftWalkAnimation.getKeyFrame(stateTime, true);
+            }else{
+                currentFrame = rightWalkAnimation.getKeyFrame(stateTime, true);
+            }
+            if(atTV==0){
+                mc_batch.draw(currentFrame, mc_pos[0], mc_pos[1], 286,720);
+            }
+        }
+
         mc_batch.end();
 
-        for(int i=0;i<5;i++){
-            if(mc_pos[0] == positions[i][0] && mc_pos[1] == positions[i][1]){
-                //Do a random idle animation for 5 seconds (display speech bubble)
-                //Then set a new position to walk towards
-                new_pos_index = ThreadLocalRandom.current().nextInt(0,4)%Gdx.graphics.getWidth();
-                if(mc_pos[0] < positions[new_pos_index][0]){ //Current x is less than destination x
-                    dir = "right";
-                }
-                else{ //Current x is greater than destination x
-                    dir = "left";
+        if(isDead()==0){
+            for(int i=0;i<5;i++){
+                if(mc_pos[0] == positions[i][0] && mc_pos[1] == positions[i][1]){
+                    //Do a random idle animation for 5 seconds (display speech bubble)
+                    //Then set a new position to walk towards
+                    new_pos_index = ThreadLocalRandom.current().nextInt(0,4)%Gdx.graphics.getWidth();
+                    if(mc_pos[0] < positions[new_pos_index][0]){ //Current x is less than destination x
+                        dir = "right";
+                    }
+                    else{ //Current x is greater than destination x
+                        dir = "left";
+                    }
                 }
             }
         }
@@ -357,7 +373,7 @@ public class Dorm {
         }
         else if (watchingTV == 1){
             dir = "right";
-            int[] dest = {1200, 1000};
+            int[] dest = {1000, 800};
             if (mc_pos[0] < dest[0]) { //Current x is less than destination x
                 mc_pos[0] += 2;
             } else { //Current x is greater than destination x
@@ -370,6 +386,10 @@ public class Dorm {
             }
             if(mc_pos[0]==dest[0] && mc_pos[1]==dest[1]){
                 atTV = 1;
+                if(justGotToTV==0){
+                    bg = new Texture(Gdx.files.internal("data/dorm/tvBG2.jpg"));
+                    justGotToTV = 1;
+                }
             }
         }
         if(atTV == 1){
@@ -395,6 +415,7 @@ public class Dorm {
             if(Dorm.needs[3] >= 8){
                 watchingTV = 0;
                 dir = "left";
+                justGotToTV = 0;
                 atTV = 0;
                 bg = new Texture(Gdx.files.internal("data/dorm/dormBG.png"));
             }
@@ -478,5 +499,14 @@ public class Dorm {
         this.rightWalkAnimation = new Animation<TextureRegion>((float)0.225, rightWalkFrames);
         this.stateTime = (float)0;
 
+    }
+
+    public int isDead(){
+        for(int i=0; i<6; i++){
+            if(needs[i]!=0){
+                return 0;
+            }
+        }
+        return 1; //All needs are at 0
     }
 }
