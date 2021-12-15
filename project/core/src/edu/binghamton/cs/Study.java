@@ -297,8 +297,8 @@ public class Study {
         font.getData().setScale(9f);
         font2 = new BitmapFont();
         font2.getData().setScale(7f);
-        font.setColor(Color.BLACK);
-        font2.setColor(Color.BLACK);
+        font.setColor(0,0,0,1);
+        font2.setColor(0,0,0,1);
 
         //Staging
         stage = new Stage(new ScreenViewport());
@@ -317,7 +317,7 @@ public class Study {
             hygiene_f = -hygiene;//needs[2] DONE
             sleep_f = -sleep;//needs[0] DONE
             study_f = study;//needs[1] DONE
-            
+
             while(Dorm.needs[1]<8 && study!=0){
                 Dorm.needs[1]++;
                 study--;
@@ -340,7 +340,7 @@ public class Study {
 
             batch.begin();
             batch.draw(bg,0,0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-            font.draw(batch,"Health, Hygiene, sleep, and study stats are as follows: "+health_f+" "+hygiene_f+" "+sleep_f+" "+study_f,10,Gdx.graphics.getHeight()-50,Gdx.graphics.getWidth(), 10,true);
+            font.draw(batch,"Sleep, Study, Hygiene, and Health stats are as follows: "+Dorm.needs[0]+" "+Dorm.needs[1]+" "+Dorm.needs[2]+" "+Dorm.needs[5],10,Gdx.graphics.getHeight()-50,Gdx.graphics.getWidth(), 10,true);
             font2.draw(batch,"TAP SCREEN TO STOP STUDYING",10, 300,Gdx.graphics.getWidth(),5, true);
             batch.end();
 
@@ -565,8 +565,7 @@ public class Study {
         }
     }
 }
-
-            /*
+/*
             int max = 3;
             int min = 0;
             int range = max - min + 1;
