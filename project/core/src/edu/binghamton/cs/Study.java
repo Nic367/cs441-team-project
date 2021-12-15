@@ -110,10 +110,10 @@ public class Study {
         bg = new Texture(Gdx.files.internal("study/deadbg.png"));
         blocks = new Texture(Gdx.files.internal("study/blocks.png"));
         //player images
-        player_up = new Texture(Gdx.files.internal("study/img09.png"));
-        player_down = new Texture(Gdx.files.internal("study/img01.png"));
-        player_left = new Texture(Gdx.files.internal("study/img02.png"));
-        player_right = new Texture(Gdx.files.internal("study/img06.jpeg"));
+        player_up = new Texture(Gdx.files.internal("data/hunger/head.png"));
+        player_down = new Texture(Gdx.files.internal("data/hunger/head.png"));
+        player_left = new Texture(Gdx.files.internal("data/hunger/head.png"));
+        player_right = new Texture(Gdx.files.internal("data/hunger/head.png"));
         //distractions images
         netflix = new Texture(Gdx.files.internal("study/img04.png"));
         hulu = new Texture(Gdx.files.internal("study/img05.png"));
